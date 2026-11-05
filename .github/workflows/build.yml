@@ -108,7 +108,7 @@ jobs:
             - Official DXN product photos for 47 SKUs (bundled offline; 4 use a generated tile)
             - Product image previews in the catalogue, cart and admin screens
             - Shop PIN sign-in (HMAC bearer token, 30-day expiry)
-- Native InfinityFree challenge solver, so the API works from the app
+            - Native InfinityFree challenge solver, so the API works from the app
             - Offline-first: cached catalogue, queued sales, automatic replay
             - Idempotent orders (`client_uuid`) — a retry never double-books
             - Incremental sync on a server-wide revision counter

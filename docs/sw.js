@@ -1,11 +1,12 @@
 /**
  * Service worker for the Mohammadpur Stock Point web app.
  *
- * Caches the app shell so the POS opens with no signal; never touches API
- * responses (different origin) so sync always talks to the real server.
+ * Caches the app shell so the POS opens with no signal. API responses are
+ * always fetched from the network (the API is same-origin on the custom
+ * domain), so sync never reads a stale cache.
  */
 
-const VERSION = 'dxn-stockpoint-2.2.0-r1';
+const VERSION = 'dxn-stockpoint-2.2.0-r2';
 const SHELL = [
   './',
   './index.html',
@@ -103,7 +104,8 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return; // API calls and fonts go straight to the network
+  if (url.origin !== self.location.origin) return; // fonts and other origins
+  if (url.pathname.startsWith('/api/')) return; // sync always hits the real server
 
   if (request.mode === 'navigate') {
     event.respondWith(

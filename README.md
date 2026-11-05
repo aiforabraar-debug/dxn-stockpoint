@@ -7,10 +7,10 @@ Releases, InfinityFree (PHP 8 + MySQL), and Google Play.
 
 | | |
 |---|---|
-| 🌐 Web app | https://abraar05.github.io/dxn-stockpoint/ |
+| 🌐 Web app | https://aiforabraar-debug.github.io/dxn-stockpoint/ |
 | 📱 Android | GitHub Releases → `dxn-stockpoint-2.1.2-debug.apk` |
-| 🔌 API | InfinityFree — `https://<your-site>/api/v1/...` |
-| 🔒 Privacy | https://abraar05.github.io/dxn-stockpoint/privacy.html |
+| 🔌 API | InfinityFree — `https://<your-site>/api/v1/...` (local: `http://127.0.0.1:8099`) |
+| 🔒 Privacy | https://aiforabraar-debug.github.io/dxn-stockpoint/privacy.html |
 
 ---
 
@@ -81,7 +81,7 @@ The emulator reaches the local API at `http://10.0.2.2:8099` (the app's default)
 ### Prove it is actually in sync
 
 Two scripts run against a live API (`scripts/dev.ps1` first) and exit non-zero
-on any failure:
+on any failure. The same checks run in CI on every push:
 
 ```powershell
 # 22 checks: a web-shaped sale and an android-shaped sale land in one feed,
@@ -90,7 +90,28 @@ powershell -ExecutionPolicy Bypass -File scripts/verify-two-client-sync.ps1
 
 # 55 checks: the exact wire contract the Kotlin client is bound to
 powershell -ExecutionPolicy Bypass -File scripts/verify-android-contract.ps1
+
+# 55 checks: full Node.js E2E against a throwaway SQLite database
+node scripts/test-api.mjs
 ```
+
+CI pipeline (`.github/workflows/`):
+
+| Workflow | What it does |
+|----------|-------------|
+| `test.yml` | Boots the API, runs all three verification suites (55 + 22 + 55 checks) |
+| `pages.yml` | Publishes `docs/` to GitHub Pages on every push to `main` |
+| `api-deploy.yml` | Lints PHP, installs schema, smoke-tests, then FTP-deploys to InfinityFree |
+| `build.yml` | Compiles the Android APK + AAB and publishes a GitHub Release |
+
+### Deployment checklist
+
+1. **API** → InfinityFree. Fill `api/config/config.php`, upload `api/`, open `…/api/install.php?key=<install_key>` once.
+2. **Web** → push to `main`; `pages.yml` publishes `docs/` to GitHub Pages.
+3. **Android** → push to `main`; `build.yml` publishes the APK/AAB to GitHub Releases.
+4. **Secrets** (repo Settings → Secrets and variables → Actions):
+   - `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` — for automatic InfinityFree API upload
+   - `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` — for signed release APK/AAB (required for Google Play)
 
 ## Using the app
 

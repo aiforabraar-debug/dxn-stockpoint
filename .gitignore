@@ -55,6 +55,10 @@ android/DXNStockpoint/.kotlin/
 .ftp-state*.json
 api/**/.ftp-state*.json
 
+# Enterprise is a separate repository, not part of this POS
+enterprise/
+api/**/.ftp-state*.json
+
 # PHP dev server router used locally only
 api/public/router.php
 

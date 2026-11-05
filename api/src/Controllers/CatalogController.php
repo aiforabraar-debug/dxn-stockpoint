@@ -15,7 +15,12 @@ final class CatalogController
     public static function index(): void
     {
         $includeInactive = (string) Request::query('include_inactive', '0') === '1' && Auth::isAdmin();
-        $products = Store::products($includeInactive);
+        $page   = max(1, Util::int(Request::query('page', 1), 1));
+        $perPage = max(1, min(Util::int(Request::query('per_page', 50), 1), 200));
+        $offset = ($page - 1) * $perPage;
+
+        $products = Store::productsPaginated($perPage, $offset, $includeInactive);
+        $total    = Store::productsCount($includeInactive);
 
         $categories = [];
         foreach ($products as $product) {
@@ -26,6 +31,10 @@ final class CatalogController
             'products'   => $products,
             'categories' => array_keys($categories),
             'count'      => count($products),
+            'total'      => $total,
+            'page'       => $page,
+            'per_page'   => $perPage,
+            'pages'      => (int) ceil($total / $perPage),
         ]);
     }
 

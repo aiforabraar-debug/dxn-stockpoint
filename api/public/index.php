@@ -69,6 +69,7 @@ $router->get('/api/v1/orders', static fn () => OrderController::index());
 $router->post('/api/v1/orders', static fn () => OrderController::create());
 $router->get('/api/v1/orders/{id}', static fn (array $p) => OrderController::show($p));
 $router->post('/api/v1/orders/{id}/status', static fn (array $p) => OrderController::updateStatus($p));
+$router->post('/api/v1/orders/{id}/return', static fn (array $p) => OrderController::returnOrder($p));
 $router->get('/api/v1/orders/{id}/receipt', static fn (array $p) => OrderController::receipt($p));
 
 // ── Customers, dashboard, reporting ─────────────────────────────────────────

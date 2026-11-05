@@ -21,13 +21,29 @@ final class OrderController
     {
         Auth::requireAdmin();
 
-        $orders = Store::orders([
-            'limit'  => Util::int(Request::query('limit', 50), 50),
+        $page   = max(1, Util::int(Request::query('page', 1), 1));
+        $perPage = max(1, min(Util::int(Request::query('per_page', Request::query('limit', 50)), 50), 200));
+        $offset = ($page - 1) * $perPage;
+
+        $orders = Store::ordersPaginated([
+            'limit'  => $perPage,
+            'offset' => $offset,
+            'status' => Request::query('status'),
+            'q'      => Request::query('q'),
+        ]);
+        $total = Store::ordersCount([
             'status' => Request::query('status'),
             'q'      => Request::query('q'),
         ]);
 
-        Response::ok(['orders' => $orders, 'count' => count($orders)]);
+        Response::ok([
+            'orders'  => $orders,
+            'count'   => count($orders),
+            'total'   => $total,
+            'page'    => $page,
+            'per_page'=> $perPage,
+            'pages'   => (int) ceil($total / $perPage),
+        ]);
     }
 
     public static function show(array $params): void
@@ -238,6 +254,49 @@ final class OrderController
     }
 
     /** Plain-text receipt, handy for printing from a phone or headless device. */
+    /** Refund a confirmed order: restores stock and marks it RETURNED. Idempotent. */
+    public static function returnOrder(array $params): void
+    {
+        Auth::requireAdmin();
+        $id = (int) $params['id'];
+        $order = Store::order($id);
+        if ($order === null) {
+            Response::error('Order not found', 404, 'not_found');
+        }
+        if ($order['status'] === 'RETURNED') {
+            Response::ok(['message' => 'Order already returned', 'order' => $order]);
+        }
+        if (!in_array($order['status'], ['CONFIRMED', 'PACKED', 'DELIVERED'], true)) {
+            Response::error('Only confirmed, packed or delivered orders can be returned', 422, 'invalid_status');
+        }
+
+        [$order, $warning] = Database::transaction(static function () use ($id): array {
+            $rev = Store::nextRev();
+            $now = Util::now();
+
+            Database::run(
+                'UPDATE orders SET status = ?, updated_at = ?, rev = ? WHERE id = ?',
+                ['RETURNED', $now, $rev, $id]
+            );
+
+            // Restore stock for every line item.
+            foreach ($order['items'] as $item) {
+                Store::applyStockDelta(
+                    (int) $item['product_id'],
+                    (int) $item['quantity'],
+                    'return',
+                    $id
+                );
+            }
+
+            Store::audit('order_returned', 'order', (string) $id, "restored stock for " . count($order['items']) . " line(s)");
+
+            return [Store::order($id), null];
+        });
+
+        Response::ok(['message' => 'Order returned and stock restored', 'order' => $order, 'warning' => $warning]);
+    }
+
     public static function receipt(array $params): void
     {
         Auth::requireAdmin();

@@ -1,0 +1,99 @@
+name: Verify API contracts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'scripts/**'
+      - '.github/workflows/test.yml'
+  pull_request:
+    paths:
+      - 'api/**'
+      - 'scripts/**'
+      - '.github/workflows/test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run verification suites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, mbstring, json
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install schema into a throwaway SQLite database
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
+          DXN_ADMIN_KEY: test-admin-key-0123456789
+          DXN_INSTALL_KEY: test-install-key
+          DXN_DEBUG: '1'
+        run: php api/bin/install.php --pin=2468 --fresh
+
+      - name: Boot the API
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
+          DXN_ADMIN_KEY: test-admin-key-0123456789
+          DXN_INSTALL_KEY: test-install-key
+          DXN_DEBUG: '1'
+        run: |
+          php -S 127.0.0.1:8099 -t api/public api/public/index.php > /tmp/php.log 2>&1 &
+          echo $! > /tmp/api.pid
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8099/api/v1/health > /dev/null && break
+            sleep 1
+          done
+          if ! curl -sf http://127.0.0.1:8099/api/v1/health > /dev/null; then
+            echo "API did not start. Log:"; cat /tmp/php.log
+            exit 1
+          done
+
+      - name: Run Android API contract check (55 checks)
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
+          DXN_ADMIN_KEY: test-admin-key-0123456789
+          DXN_INSTALL_KEY: test-install-key
+        run: |
+          pwsh -NoProfile -Command "& { Set-ExecutionPolicy Bypass -Scope Process -Force; ./scripts/verify-android-contract.ps1 -Base http://127.0.0.1:8099 -Pin 2468 }"
+
+      - name: Run two-client live-sync check (22 checks)
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
+          DXN_ADMIN_KEY: test-admin-key-0123456789
+          DXN_INSTALL_KEY: test-install-key
+        run: |
+          pwsh -NoProfile -Command "& { Set-ExecutionPolicy Bypass -Scope Process -Force; ./scripts/verify-two-client-sync.ps1 -Base http://127.0.0.1:8099 -Pin 2468 }"
+
+      - name: Run Node E2E test (55 checks)
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
+          DXN_ADMIN_KEY: test-admin-key-0123456789
+          DXN_INSTALL_KEY: test-install-key
+          DXN_DEBUG: '1'
+        run: node scripts/test-api.mjs
+
+      - name: Always capture API log
+        if: always()
+        run: |
+          if [ -f /tmp/api.pid ]; then kill "$(cat /tmp/api.pid)" 2>/dev/null || true; fi
+          cat /tmp/php.log 2>/dev/null | tail -50 || true

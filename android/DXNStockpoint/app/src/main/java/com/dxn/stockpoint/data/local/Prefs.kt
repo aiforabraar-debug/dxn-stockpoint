@@ -19,7 +19,7 @@ object Prefs {
     private const val KEY_CART = "cart_snapshot"
 
     /** The live shop API — fresh installs connect out of the box. */
-    const val DEFAULT_BASE_URL = "https://dxnstock.byethost7.com/"
+    const val DEFAULT_BASE_URL = "https://dxn.10001mb.com/"
     const val DEFAULT_WA_PHONE = "8801939994578"
 
     /** Pre-rebrand defaults; untouched values silently migrate in the getters. */

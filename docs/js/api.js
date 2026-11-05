@@ -7,7 +7,11 @@
  */
 
 const BASE_KEY = 'dxn.apiBase.v2';
-const DEFAULT_BASE = 'https://dxnstock.byethost7.com';
+const DEFAULT_BASE = (() => {
+  const host = globalThis.location?.hostname || '';
+  if (host === 'dxn.10001mb.com') return globalThis.location.origin;
+  return 'https://dxn.10001mb.com';
+})();
 const TOKEN_KEY = 'dxn.token.v2';
 const TOKEN_META_KEY = 'dxn.tokenMeta.v2';
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * One-page installer. Open it in a browser after uploading the API:
  *
- *     https://your-subdomain.infinityfreeapp.com/install.php?key=<install_key>
+ *     https://your-subdomain.byethost7.com/api/install.php?key=<install_key>
  *
  * It creates the tables, seeds the approved 51-product catalog and stores a
  * hashed shop PIN. Submitting again resets the PIN; use /api/v1/migrate for
@@ -82,9 +82,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     }
 }
 
-$baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http')
-    . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost')
-    . rtrim(str_replace('/install.php', '', $_SERVER['SCRIPT_NAME'] ?? '/'), '/');
+$origin = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http')
+    . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,7 +130,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 
       <div class="err">No <code>config/config.php</code> found next to this file.</div>
       <div class="note">
         <b>Fix it in 60 seconds:</b><br>
-        1. In InfinityFree open <i>MySQL Databases</i> and copy host, name, user, password.<br>
+        1. In ByetHost open <i>MySQL Databases</i> and copy host, name, user, password.<br>
         2. In the file manager, copy <code>config/config.sample.php</code> to <code>config/config.php</code>.<br>
         3. Paste the four values plus a long random <code>admin_key</code>.<br>
         4. Reload this page.
@@ -139,9 +138,9 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 
     <?php elseif ($dbError !== null): ?>
       <div class="err">Cannot reach the database: <?= Util::e($dbError) ?></div>
       <div class="note">
-        On InfinityFree the host is <b>not</b> <code>localhost</code> — it looks like
-        <code>sql301.infinityfree.com</code>. Double-check the database name
-        (<code>if0_12345678_dxn</code>) as well.
+        On ByetHost the host is <b>not</b> <code>localhost</code> - it looks like
+        <code>sql209.byethost7.com</code>. Double-check the database name
+        (<code>b7_12345678_dxn</code>) as well.
       </div>
     <?php elseif (!$keyOk): ?>
       <div class="err">Install key missing or incorrect.</div>
@@ -173,8 +172,8 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 
 
       <div class="note">
         <b>API base URL for the web + Android clients</b><br>
-        <code><?= Util::e($baseUrl) ?></code><br><br>
-        Health check: <code><?= Util::e($baseUrl) ?>/api/v1/health</code><br>
+        <code><?= Util::e($origin) ?></code><br><br>
+        Health check: <code><?= Util::e($origin) ?>/api/v1/health</code><br>
         Once everything works, delete or rename <code>install.php</code> on the server.
       </div>
     <?php endif; ?>

@@ -8,7 +8,7 @@ use PDOException;
 use RuntimeException;
 
 /**
- * Thin PDO wrapper. Supports MySQL (production / InfinityFree) and SQLite
+ * Thin PDO wrapper. Supports MySQL (production / ByetHost) and SQLite
  * (zero-setup local development and CI smoke tests).
  */
 final class Database

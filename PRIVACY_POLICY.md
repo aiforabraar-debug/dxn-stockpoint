@@ -41,7 +41,7 @@ anything about the person holding the phone.
   when the app data is cleared.
 - **On your server.** If a server URL is configured, the data is sent over
   HTTPS to the PHP + MySQL API that the shopkeeper deployed (for example on
-  InfinityFree). That server is operated by the shop, not by the app author.
+  ByetHost). That server is operated by the shop, not by the app author.
   The app author has no access to it and receives no copy of the data.
 
 ## 3. Permissions and why each is needed

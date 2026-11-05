@@ -5,7 +5,7 @@ declare(strict_types=1);
  * DXN Stockpoint API — front controller.
  *
  * Everything is routed through this file (see .htaccess). Works on any PHP 8
- * host: InfinityFree, cPanel, a VPS, or `php -S localhost:8080 -t api/public`.
+ * host: ByetHost, cPanel, a VPS, or `php -S localhost:8080 -t api/public`.
  */
 
 $bootstrap = __DIR__ . '/../src/bootstrap.php';

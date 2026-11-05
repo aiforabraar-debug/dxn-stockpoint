@@ -7,7 +7,7 @@ namespace DXN;
  * Database schema + seed data.
  *
  * Every statement is written so it runs unchanged on MySQL/MariaDB (production,
- * InfinityFree) and on SQLite (local development, CI). Only the primary key
+ * ByetHost) and on SQLite (local development, CI). Only the primary key
  * syntax and the table suffix differ, and those are resolved here.
  */
 final class Schema

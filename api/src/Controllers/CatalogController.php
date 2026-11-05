@@ -16,7 +16,7 @@ final class CatalogController
     {
         $includeInactive = (string) Request::query('include_inactive', '0') === '1' && Auth::isAdmin();
         $page   = max(1, Util::int(Request::query('page', 1), 1));
-        $perPage = max(1, min(Util::int(Request::query('per_page', 50), 1), 200));
+        $perPage = max(1, min(Util::int(Request::query('per_page', 200), 1), 200));
         $offset = ($page - 1) * $perPage;
 
         $products = Store::productsPaginated($perPage, $offset, $includeInactive);

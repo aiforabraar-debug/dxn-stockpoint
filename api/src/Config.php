@@ -7,7 +7,7 @@ namespace DXN;
  * Configuration loader.
  *
  * Reads config/config.php (never committed, never overwritten by deploys) and
- * layers environment variables on top so the same code runs on InfinityFree,
+ * layers environment variables on top so the same code runs on ByetHost,
  * on a VPS, and on a laptop with PHP's built-in server.
  */
 final class Config
@@ -42,7 +42,7 @@ final class Config
         $defaults = [
             'driver'          => 'mysql',            // mysql | sqlite
             'db'              => [
-                'host'    => 'sql301.infinityfree.com',
+                'host'    => 'localhost',
                 'port'    => 3306,
                 'name'    => '',
                 'user'    => '',
@@ -58,7 +58,7 @@ final class Config
             'timezone'        => 'UTC',
             'debug'           => false,
             'trust_proxy'     => true,
-            'version'         => '2.1.2',
+            'version'         => '2.2.0',
         ];
 
         $merged = array_replace_recursive($defaults, $data);

@@ -2,12 +2,12 @@
  * Transport layer for the Mohammadpur Stock Point API (PHP 8 + MySQL).
  *
  * The base URL is chosen on first run and stored in localStorage, so the same
- * static build can talk to a local dev server, InfinityFree, or anything else
+ * static build can talk to a local dev server, ByetHost, or anything else
  * that serves api/public.
  */
 
 const BASE_KEY = 'dxn.apiBase.v2';
-const DEFAULT_BASE = 'https://dxn.10001mb.com';
+const DEFAULT_BASE = 'https://dxnstock.byethost7.com';
 const TOKEN_KEY = 'dxn.token.v2';
 const TOKEN_META_KEY = 'dxn.tokenMeta.v2';
 

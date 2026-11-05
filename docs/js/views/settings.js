@@ -27,7 +27,7 @@ function connectionCard() {
 
       <label class="field"><span>API base URL</span>
         <input class="input" id="apiBaseInput" type="url" inputmode="url" spellcheck="false"
-          placeholder="https://dnx-stockpoint.infinityfreeapp.com"
+          placeholder="https://dxnstock.byethost7.com"
           value="${esc(getBase())}"></label>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -44,10 +44,10 @@ function connectionCard() {
       <details style="margin-top:14px">
         <summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:var(--muted)">How do I get an API address?</summary>
         <ol style="font-size:12.5px;color:var(--muted);line-height:1.8;padding-left:18px;margin-top:8px">
-          <li>Create a free InfinityFree account and a MySQL database.</li>
+          <li>Create a free ByetHost account and a MySQL database.</li>
           <li>Upload the <code>api/</code> folder from the GitHub repo into <code>htdocs</code>.</li>
           <li>Copy <code>api/config/config.sample.php</code> to <code>api/config/config.php</code> and paste the database values.</li>
-          <li>Open <code>/api/public/install.php?key=YOUR_INSTALL_KEY</code> and set the shop PIN.</li>
+          <li>Open <code>/api/install.php?key=YOUR_INSTALL_KEY</code> and set the shop PIN.</li>
           <li>Paste that address here — the Android app uses the same one.</li>
         </ol>
       </details>
@@ -182,14 +182,14 @@ function aboutCard() {
         <div class="list__row"><div class="list__main">
           <div class="list__title">Web app</div>
           <div class="list__sub">Static PWA hosted on GitHub Pages</div></div>
-          <a class="btn btn--sm btn--ghost" href="https://github.com/abraar05/dxn-stockpoint" target="_blank" rel="noopener">Repo</a></div>
+          <a class="btn btn--sm btn--ghost" href="https://github.com/aiforabraar-debug/dxn-stockpoint" target="_blank" rel="noopener">Repo</a></div>
         <div class="list__row"><div class="list__main">
           <div class="list__title">Android app</div>
           <div class="list__sub">Kotlin + Compose, same API, offline cache</div></div>
-          <a class="btn btn--sm btn--ghost" href="https://github.com/abraar05/dxn-stockpoint/releases" target="_blank" rel="noopener">APK</a></div>
+          <a class="btn btn--sm btn--ghost" href="https://github.com/aiforabraar-debug/dxn-stockpoint/releases" target="_blank" rel="noopener">APK</a></div>
         <div class="list__row"><div class="list__main">
           <div class="list__title">Backend</div>
-          <div class="list__sub">PHP 8 + MySQL on InfinityFree (free forever)</div></div>
+          <div class="list__sub">PHP 8 + MySQL on ByetHost (free forever)</div></div>
           <a class="btn btn--sm btn--ghost" href="${esc(getBase())}/api/v1/health" target="_blank" rel="noopener">Health</a></div>
         <div class="list__row"><div class="list__main">
           <div class="list__title">Privacy</div>
@@ -198,7 +198,7 @@ function aboutCard() {
       </div>
       <p style="font-size:11.5px;color:var(--faint);margin-top:12px">
         Built to run on free tiers: GitHub Pages for the web, GitHub Releases for the APK,
-        InfinityFree for the API. No paid services required.
+        ByetHost for the API. No paid services required.
       </p>
     </div>
   `;
@@ -207,7 +207,7 @@ function aboutCard() {
 
 function courierCard() {
   const disabled = store.state.isAdmin ? '' : 'disabled';
-  const base = 'https://dxn.infy.click';
+  const base = 'https://dxnstock.byethost7.com';
   const webhookUrl = `${getBase() || base}/api/v1/courier/webhook`;
   return `
     <div class="card card--pad" style="margin-bottom:18px" id="courierCard">

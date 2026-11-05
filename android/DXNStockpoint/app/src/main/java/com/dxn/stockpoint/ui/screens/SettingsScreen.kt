@@ -103,7 +103,7 @@ fun SettingsScreen(
                         }
                         Text(
                             "💡 Tip: the built-in default connects to the live shop API\n" +
-                            "(https://dxn.infy.click/). For local development, point this\n" +
+                            "(https://dxnstock.byethost7.com/). For local development, point this\n" +
                             "at a tunnel or the emulator loopback instead.",
                             fontSize = 11.sp, color = Color.Gray
                         )

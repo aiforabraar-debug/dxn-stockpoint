@@ -5,14 +5,14 @@ declare(strict_types=1);
  * Mohammadpur Stock Point API configuration.
  *
  * Copy this file to `config/config.php` on the server and fill in the values
- * from your InfinityFree control panel (MySQL Databases). `config.php` is
+ * from your ByetHost control panel (MySQL Databases). `config.php` is
  * git-ignored and is never overwritten by the deploy workflow, so your
  * credentials survive every update.
  *
- * InfinityFree details you will need:
- *   - MySQL host looks like  sql301.infinityfree.com  (NOT localhost)
- *   - Database name looks like  if0_12345678_dxn
- *   - Username looks like       if0_12345678
+ * ByetHost details you will need:
+ *   - MySQL host looks like  sql209.byethost7.com  (NOT localhost)
+ *   - Database name looks like  b7_12345678_dxn
+ *   - Username looks like       b7_12345678
  */
 
 return [
@@ -20,10 +20,10 @@ return [
     'driver' => 'mysql',
 
     'db' => [
-        'host'    => 'sql301.infinityfree.com',
+        'host'    => 'sql209.byethost7.com',
         'port'    => 3306,
-        'name'    => 'if0_XXXXXXXX_dxn',
-        'user'    => 'if0_XXXXXXXX',
+        'name'    => 'b7_XXXXXXXX_dxn',
+        'user'    => 'b7_XXXXXXXX',
         'pass'    => 'your-database-password',
         'charset' => 'utf8mb4',
         // Only used when driver = sqlite
@@ -50,5 +50,5 @@ return [
     'timezone' => 'UTC',
     'debug'    => false,
     'trust_proxy' => true,
-    'version'  => '2.1.2',
+    'version'  => '2.2.0',
 ];

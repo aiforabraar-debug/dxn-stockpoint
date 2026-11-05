@@ -62,21 +62,23 @@ jobs:
           set -e
           mkdir -p dist
           cp android/DXNStockpoint/app/build/outputs/apk/debug/app-debug.apk \
-             dist/dxn-stockpoint-2.1.2-debug.apk
-          cp dist/dxn-stockpoint-2.1.2-debug.apk dist/dxn-stockpoint-latest.apk
+             dist/dxn-stockpoint-2.2.0-debug.apk
           # Signed release only exists once the keystore secrets are configured.
           if [ -f android/DXNStockpoint/app/build/outputs/apk/release/app-release.apk ]; then
             cp android/DXNStockpoint/app/build/outputs/apk/release/app-release.apk \
-               dist/dxn-stockpoint-2.1.2.apk
+               dist/dxn-stockpoint-2.2.0.apk
+            cp dist/dxn-stockpoint-2.2.0.apk dist/dxn-stockpoint-latest.apk
+          else
+            cp dist/dxn-stockpoint-2.2.0-debug.apk dist/dxn-stockpoint-latest.apk
           fi
           cp android/DXNStockpoint/app/build/outputs/bundle/release/app-release.aab \
-             dist/dxn-stockpoint-2.1.2.aab
+             dist/dxn-stockpoint-2.2.0.aab
           ls -lh dist
 
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
         with:
-          name: dxn-stockpoint-2.1.2
+          name: dxn-stockpoint-2.2.0
           path: dist/*
           retention-days: 30
 
@@ -84,22 +86,23 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'v2.1.2' }}
-          name: Mohammadpur Stock Point v2.1.2 — Web + Android, live synced
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'v2.2.0' }}
+          name: Mohammadpur Stock Point v2.2.0 — Web + Android, live synced
           body: |
-            ## Mohammadpur Stock Point v2.1.2
+            ## Mohammadpur Stock Point v2.2.0
 
-            Supersedes the earlier v2.0.0 tag: the PHP 8 + MySQL API is the single
-            source of truth, and the web app and the Android app both run from it
-            with revision-based live sync and an offline outbox.
+            The PHP 8 + MySQL API is the single source of truth, and the web app
+            and the Android app both run from it with revision-based live sync
+            and an offline outbox. The API now runs on ByetHost free hosting.
 
-            **Install the APK:** `dxn-stockpoint-2.1.2-debug.apk` (sideload) or
-            upload `dxn-stockpoint-2.1.2.aab` to Google Play.
+            **Install the APK:** `dxn-stockpoint-2.2.0-debug.apk` (sideload) or
+            upload `dxn-stockpoint-2.2.0.aab` to Google Play.
 
-            **Web app:** https://abraar05.github.io/dxn-stockpoint/
+            **Web app:** https://aiforabraar-debug.github.io/dxn-stockpoint/
 
             ### What is in this build
-            - Connects out of the box — the live shop API (dxn.infy.click) is the built-in default
+            - Connects out of the box — the live shop API (dxnstock.byethost7.com) is the built-in default
+            - API returns the full 51-SKU catalogue by default (per_page=200)
             - New Mohammadpur Stock Point logo, app icon and splash artwork
             - The shop's full 2026 DXN price list: 51 SKUs with exact DP/PV/MRP
             - Official DXN product photos for 47 SKUs (bundled offline; 4 use a generated tile)

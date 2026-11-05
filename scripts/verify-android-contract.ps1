@@ -54,7 +54,7 @@ Write-Host "`nMohammadpur Stock Point — Android API contract check against $Ba
 # ── 1. Health ───────────────────────────────────────────────────────────────
 $health = Get-Json '/api/v1/health'
 Check 'health returns success' ($health.success -eq $true)
-Check 'health reports version 2.1.2' ($health.version -eq '2.1.2') "got '$($health.version)'"
+Check 'health reports version 2.2.0' ($health.version -eq '2.2.0') "got '$($health.version)'"
 Check 'health exposes server_rev' ($null -ne $health.server_rev)
 
 # ── 2. Public sync (the anonymous catalogue pull) ───────────────────────────

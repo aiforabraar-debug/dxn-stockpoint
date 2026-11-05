@@ -1,15 +1,15 @@
-name: Deploy API (InfinityFree)
+name: Deploy API (ByetHost)
 
 # The PHP API is the single source of truth for both clients. This workflow
 # lints it on every push and mirrors it over FTP on main
-# into InfinityFree's htdocs.
+# into ByetHost's htdocs.
 #
 # Required repository secrets:
-#   FTP_SERVER    e.g. ftpupload.net
-#   FTP_USERNAME  your InfinityFree account (if0_xxxxxxxx)
-#   FTP_PASSWORD  your InfinityFree account password
+#   FTP_SERVER    ftpupload.net
+#   FTP_USERNAME  your ByetHost account (b7_xxxxxxxx)
+#   FTP_PASSWORD  your ByetHost account password
 #
-# Resulting endpoints:  https://<your-subdomain>.infinityfreeapp.com/api/v1/...
+# Resulting endpoints:  https://dxnstock.byethost7.com/api/v1/...
 
 on:
   push:
@@ -84,7 +84,7 @@ jobs:
 
             $health = $get("/health");
             $check("health returns success", is_array($health) && ($health["success"] ?? false) === true);
-            $check("health reports version 2.1.2", ($health["version"] ?? null) === "2.1.2");
+            $check("health reports version 2.2.0", ($health["version"] ?? null) === "2.2.0");
 
             $products = $get("/products");
             $check("catalogue is public", is_array($products) && ($products["success"] ?? false) === true);
@@ -128,7 +128,7 @@ jobs:
           cat /tmp/php.log | tail -20
 
   deploy:
-    name: Mirror api/ to InfinityFree
+    name: Mirror api/ to ByetHost
     needs: lint
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -150,7 +150,7 @@ jobs:
             echo "::warning::FTP secrets are not configured; skipping FTP upload. The API was deployed manually. Add FTP_SERVER, FTP_USERNAME, and FTP_PASSWORD repository Actions secrets to enable automatic uploads."
           fi
 
-      # dxn.infy.click/htdocs/api/index.php + install.php + .htaccess
+      # htdocs/api/index.php + install.php + .htaccess
       - name: Upload front controller
         if: steps.ftp_credentials.outputs.ready == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -161,13 +161,13 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./api/public/
-          server-dir: /dxn.infy.click/htdocs/api/
+          server-dir: /htdocs/api/
           state-name: .ftp-state-public.json
           exclude: |
             **/.ftp-state*.json
             **/router.php
 
-      # dxn.infy.click/htdocs/api/src/**
+      # htdocs/api/src/**
       - name: Upload application source
         if: steps.ftp_credentials.outputs.ready == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -178,10 +178,10 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./api/src/
-          server-dir: /dxn.infy.click/htdocs/api/src/
+          server-dir: /htdocs/api/src/
           state-name: .ftp-state-src.json
 
-      # dxn.infy.click/htdocs/api/config/** — config.php is created once on the host and must
+      # htdocs/api/config/** - config.php is created once on the host and must
       # never be overwritten by CI (it holds the MySQL password and HMAC secret).
       - name: Upload config scaffolding
         if: steps.ftp_credentials.outputs.ready == 'true'
@@ -193,7 +193,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./api/config/
-          server-dir: /dxn.infy.click/htdocs/api/config/
+          server-dir: /htdocs/api/config/
           state-name: .ftp-state-config.json
           exclude: |
             **/config.php
@@ -210,7 +210,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./api/storage/
-          server-dir: /dxn.infy.click/htdocs/api/storage/
+          server-dir: /htdocs/api/storage/
           state-name: .ftp-state-storage.json
           exclude: |
             **/*.sqlite
@@ -221,14 +221,14 @@ jobs:
       - name: Install & verify the production database
         if: steps.ftp_credentials.outputs.ready == 'true'
         env:
-          API_ORIGIN: https://dxn.infy.click
+          API_ORIGIN: https://dxnstock.byethost7.com
         run: |
           base="$API_ORIGIN/api/v1"
           check() { echo "$1: $2"; }
 
           health="$(curl -sS --max-time 20 "$base/health" 2>/dev/null || true)"
           if [ -z "$health" ]; then
-            echo "::warning::InfinityFree did not answer a plain HTTP probe (its browser challenge blocks runner traffic). Run the one-time install URL in a browser instead."
+            echo "::warning::ByetHost did not answer the health probe. Run the one-time install URL in a browser instead."
             echo "No health response — skipping the automatic install/verify."
             exit 0
           fi

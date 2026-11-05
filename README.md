@@ -1,15 +1,15 @@
-# Mohammadpur Stock Point v2.1.2 🛒
+# Mohammadpur Stock Point v2.2.0 🛒
 
-An offline-first stockpoint POS for Mohammadpur Stock Point, a DXN distributor —
+An offline-first stockpoint POS for Mohammadpur Stock Point, a DXN distributor -
 **one PHP API, two clients that stay in sync**: an installable web app and a
 native Android app. Everything runs on free, forever tiers: GitHub Pages, GitHub
-Releases, InfinityFree (PHP 8 + MySQL), and Google Play.
+Releases, ByetHost (PHP 8 + MySQL), and Google Play.
 
 | | |
 |---|---|
 | 🌐 Web app | https://aiforabraar-debug.github.io/dxn-stockpoint/ |
-| 📱 Android | GitHub Releases → `dxn-stockpoint-2.1.2-debug.apk` |
-| 🔌 API | InfinityFree — `https://<your-site>/api/v1/...` (local: `http://127.0.0.1:8099`) |
+| 📱 Android | GitHub Releases → `dxn-stockpoint-2.2.0-debug.apk` |
+| 🔌 API | ByetHost - `https://dxnstock.byethost7.com/api/v1/...` |
 | 🔒 Privacy | https://aiforabraar-debug.github.io/dxn-stockpoint/privacy.html |
 
 ---
@@ -17,25 +17,25 @@ Releases, InfinityFree (PHP 8 + MySQL), and Google Play.
 ## How the pieces fit
 
 ```
-        ┌───────────────────────┐
-        │  PHP 8 + MySQL  API   │   single source of truth
-        │  api/  (InfinityFree) │   revision counter on every row
-        └───────────┬───────────┘
+        ┌─────────────────────────┐
+        │  PHP 8 + MySQL  API     │   single source of truth
+        │  api/  (ByetHost)       │   revision counter on every row
+        └─────────────────────────┘
                     │  GET /api/v1/sync?since=<rev>
         ┌───────────┴───────────┐
         │                       │
-┌───────▼────────┐     ┌────────▼─────────┐
-│  Web (PWA)     │     │  Android         │
-│  docs/         │     │  android/        │
-│  localStorage  │     │  JSON cache      │
-│  + outbox      │     │  + outbox        │
-└────────────────┘     └──────────────────┘
+┌───────────────┐     ┌─────────────────┐
+│  Web (PWA)    │     │  Android        │
+│  docs/        │     │  android/       │
+│  localStorage │     │  JSON cache     │
+│  + outbox     │     │  + outbox       │
+└───────────────┘     └─────────────────┘
 ```
 
 - **One write path.** A sale made on the phone shows up on the shop laptop
   within 20 seconds (and vice versa) because both read the same revision feed.
 - **Every row carries `rev`.** Clients store the highest revision they have seen
-  and ask only for what changed — cheap on mobile data.
+  and ask only for what changed - cheap on mobile data.
 - **Orders are idempotent.** The client generates a `client_uuid`; replaying a
   queued order after a dropped connection can never double-book a sale.
 - **Stock is decremented atomically** (`UPDATE … WHERE stock_qty >= ?`), so two
@@ -47,11 +47,11 @@ Releases, InfinityFree (PHP 8 + MySQL), and Google Play.
 
 | Path | What it is |
 |---|---|
-| `api/` | PHP 8 API — no Composer, no framework, drop-in on shared hosting |
+| `api/` | PHP 8 API - no Composer, no framework, drop-in on shared hosting |
 | `docs/` | The web app (ES modules, no build step) + PWA manifest & service worker |
 | `android/DXNStockpoint/` | Kotlin + Jetpack Compose app |
 | `scripts/` | Local dev server, toolchain provisioning, verification suites |
-| `.github/workflows/` | Pages deploy, InfinityFree FTP deploy, APK/AAB build |
+| `.github/workflows/` | Pages deploy, ByetHost FTP deploy, APK/AAB build |
 
 > `backend/` is the retired v1 Node/SQLite server. It is kept for reference only;
 > nothing in v2 talks to it.
@@ -76,12 +76,13 @@ powershell -ExecutionPolicy Bypass -File scripts/provision-android.ps1
 powershell -ExecutionPolicy Bypass -File scripts/build-android.ps1
 ```
 
-The emulator reaches the local API at `http://10.0.2.2:8099` (the app's default).
+The emulator reaches the local API at `http://10.0.2.2:8099` (the app's dev
+fallback). Fresh installs default to the live ByetHost API.
 
 ### Prove it is actually in sync
 
 Two scripts run against a live API (`scripts/dev.ps1` first) and exit non-zero
-on any failure. The same checks run in CI on every push:
+on any failure. `test-api.mjs` boots its own throwaway server:
 
 ```powershell
 # 22 checks: a web-shaped sale and an android-shaped sale land in one feed,
@@ -99,19 +100,19 @@ CI pipeline (`.github/workflows/`):
 
 | Workflow | What it does |
 |----------|-------------|
-| `test.yml` | Boots the API, runs all three verification suites (55 + 22 + 55 checks) |
+| `test.yml` | Runs the Node E2E suite (55 checks) against a throwaway SQLite database |
 | `pages.yml` | Publishes `docs/` to GitHub Pages on every push to `main` |
-| `api-deploy.yml` | Lints PHP, installs schema, smoke-tests, then FTP-deploys to InfinityFree |
+| `api-deploy.yml` | Lints PHP, installs schema, smoke-tests, then FTP-deploys to ByetHost |
 | `build.yml` | Compiles the Android APK + AAB and publishes a GitHub Release |
 
 ### Deployment checklist
 
-1. **API** → InfinityFree. Fill `api/config/config.php`, upload `api/`, open `…/api/install.php?key=<install_key>` once.
+1. **API** → ByetHost. Fill `api/config/config.php`, upload `api/`, open `./api/install.php?key=<install_key>` once.
 2. **Web** → push to `main`; `pages.yml` publishes `docs/` to GitHub Pages.
 3. **Android** → push to `main`; `build.yml` publishes the APK/AAB to GitHub Releases.
 4. **Secrets** (repo Settings → Secrets and variables → Actions):
-   - `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` — for automatic InfinityFree API upload
-   - `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` — for signed release APK/AAB (required for Google Play)
+   - `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` - for automatic ByetHost API upload
+   - `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` - for signed release APK/AAB (required for Google Play)
 
 ## Using the app
 
@@ -130,12 +131,16 @@ Admin screens need the shop PIN. It is set when the API is installed
 
 Full walkthrough in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The short version:
 
-1. **API** → InfinityFree. Fill in `api/config/config.php`, upload, open
-   `…/api/install.php?key=<install_key>` once.
+1. **API** → ByetHost. Fill in `api/config/config.php`, upload, open
+   `./api/install.php?key=<install_key>` once.
 2. **Web** → push to `main`; `pages.yml` publishes `docs/` to GitHub Pages.
 3. **Android** → push to `main`; `build.yml` publishes the APK/AAB to Releases.
    Upload the `.aab` to Google Play, or sideload the `.apk`.
-4. Point both clients at the same API origin — they now share live data.
+4. Point both clients at the same API origin - they now share live data.
+
+> **Why not InfinityFree?** Its anti-bot JavaScript challenge blocks native
+> Android clients and CORS preflights (`OPTIONS`), so a native app can never
+> reach it. ByetHost serves the same PHP/MySQL stack with no challenge.
 
 ## API surface
 
@@ -143,7 +148,11 @@ Full walkthrough in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The short version:
 `POST /api/v1/auth/login` · `/products` · `/stock/update` · `/stock/adjust` · `/orders`
 `PUT /api/v1/products/{id}` · `/settings` · `PATCH` same
 `POST /api/v1/orders/{id}/status` · `GET` `/orders` · `/orders/{id}` · `/orders/{id}/receipt`
-`GET /api/v1/dashboard` · `/reports/sales` · `/settings` · `/sync` · `/sync/status`
+`POST /api/v1/orders/{id}/return` · `GET` `/dashboard` · `/reports/sales` · `/settings` · `/sync` · `/sync/status`
+
+`GET /products` returns the whole catalogue by default (`per_page=200`). Pass
+`?page=N&per_page=M` for pagination; the response carries `total`, `page`,
+`per_page`, and `pages` alongside `products`.
 
 Auth is either `X-Api-Key: <admin_key>` (machines) or
 `Authorization: Bearer <token>` from `POST /auth/login` with the shop PIN.

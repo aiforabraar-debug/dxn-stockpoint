@@ -49,29 +49,6 @@ jobs:
           DXN_DEBUG: '1'
         run: php api/bin/install.php --pin=2468 --fresh
 
-      - name: Boot the API
-        env:
-          DXN_DRIVER: sqlite
-          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
-          DXN_ADMIN_KEY: test-admin-key-0123456789
-          DXN_INSTALL_KEY: test-install-key
-          DXN_DEBUG: '1'
-        run: |
-          set -euo pipefail
-          rm -f /tmp/php.log /tmp/api.pid
-          php -S 127.0.0.1:8099 -t api/public api/public/index.php > /tmp/php.log 2>&1 &
-          echo $! > /tmp/api.pid
-          for i in $(seq 1 30); do
-            if curl -sf http://127.0.0.1:8099/api/v1/health > /dev/null 2>&1; then
-              echo "API is up."
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "API did not start. PHP log:"
-          cat /tmp/php.log
-          exit 1
-
       - name: Run Node E2E test (55 checks)
         env:
           DXN_DRIVER: sqlite
@@ -81,9 +58,6 @@ jobs:
           DXN_DEBUG: '1'
         run: node scripts/test-api.mjs
 
-      - name: Always capture API log
+      - name: Show test diagnostics
         if: always()
-        run: |
-          if [ -f /tmp/api.pid ]; then kill "$(cat /tmp/api.pid)" 2>/dev/null || true; fi
-          echo "=== PHP log (last 50 lines) ==="
-          cat /tmp/php.log 2>/dev/null | tail -50 || true
+        run: echo "test-api.mjs boots its own PHP server on a free port and tears it down on exit."

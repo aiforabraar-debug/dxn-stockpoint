@@ -38,7 +38,8 @@ jobs:
           node-version: '24'
 
       - name: Verify PHP SQLite driver
-        run: php -r "echo extension_loaded('pdo_sqlite') ? 'pdo_sqlite OK' : 'pdo_sqlite MISSING'; echo PHP_EOL;"
+        run: |
+          php -r "echo extension_loaded('pdo_sqlite') ? 'pdo_sqlite OK' : 'pdo_sqlite MISSING'; echo PHP_EOL;"
 
       - name: Install schema into a throwaway SQLite database
         env:

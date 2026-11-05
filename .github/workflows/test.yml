@@ -25,6 +25,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install PowerShell (for PS1 verification scripts)
+        run: sudo apt-get update -y && sudo apt-get install -y powershell
+
       - name: Set up PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
@@ -36,6 +39,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
+
+      - name: Verify PHP SQLite driver
+        run: php -r "echo extension_loaded('pdo_sqlite') ? 'pdo_sqlite OK' : 'pdo_sqlite MISSING'; echo PHP_EOL;"
 
       - name: Install schema into a throwaway SQLite database
         env:
@@ -54,16 +60,20 @@ jobs:
           DXN_INSTALL_KEY: test-install-key
           DXN_DEBUG: '1'
         run: |
+          set -euo pipefail
+          rm -f /tmp/php.log /tmp/api.pid
           php -S 127.0.0.1:8099 -t api/public api/public/index.php > /tmp/php.log 2>&1 &
           echo $! > /tmp/api.pid
           for i in $(seq 1 30); do
-            curl -sf http://127.0.0.1:8099/api/v1/health > /dev/null && break
+            if curl -sf http://127.0.0.1:8099/api/v1/health > /dev/null 2>&1; then
+              echo "API is up."
+              exit 0
+            fi
             sleep 1
           done
-          if ! curl -sf http://127.0.0.1:8099/api/v1/health > /dev/null; then
-            echo "API did not start. Log:"; cat /tmp/php.log
-            exit 1
-          done
+          echo "API did not start. PHP log:"
+          cat /tmp/php.log
+          exit 1
 
       - name: Run Android API contract check (55 checks)
         env:
@@ -96,4 +106,5 @@ jobs:
         if: always()
         run: |
           if [ -f /tmp/api.pid ]; then kill "$(cat /tmp/api.pid)" 2>/dev/null || true; fi
+          echo "=== PHP log (last 50 lines) ==="
           cat /tmp/php.log 2>/dev/null | tail -50 || true

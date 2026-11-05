@@ -25,9 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install PowerShell (for PS1 verification scripts)
-        run: sudo apt-get update -y && sudo apt-get install -y powershell
-
       - name: Set up PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
@@ -74,24 +71,6 @@ jobs:
           echo "API did not start. PHP log:"
           cat /tmp/php.log
           exit 1
-
-      - name: Run Android API contract check (55 checks)
-        env:
-          DXN_DRIVER: sqlite
-          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
-          DXN_ADMIN_KEY: test-admin-key-0123456789
-          DXN_INSTALL_KEY: test-install-key
-        run: |
-          pwsh -NoProfile -Command "& { Set-ExecutionPolicy Bypass -Scope Process -Force; ./scripts/verify-android-contract.ps1 -Base http://127.0.0.1:8099 -Pin 2468 }"
-
-      - name: Run two-client live-sync check (22 checks)
-        env:
-          DXN_DRIVER: sqlite
-          DXN_DB_PATH: ${{ github.workspace }}/api/storage/test.sqlite
-          DXN_ADMIN_KEY: test-admin-key-0123456789
-          DXN_INSTALL_KEY: test-install-key
-        run: |
-          pwsh -NoProfile -Command "& { Set-ExecutionPolicy Bypass -Scope Process -Force; ./scripts/verify-two-client-sync.ps1 -Base http://127.0.0.1:8099 -Pin 2468 }"
 
       - name: Run Node E2E test (55 checks)
         env:

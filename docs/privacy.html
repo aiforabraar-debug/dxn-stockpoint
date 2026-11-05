@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Mohammadpur Stock Point</title>
+<meta name="description" content="Privacy policy for the Mohammadpur Stock Point POS web and Android app.">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto; max-width: 46rem; padding: 2.5rem 1.25rem 5rem;
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #14201a; background: #fbfdfc;
+  }
+  header { border-bottom: 2px solid #0f7a4d; padding-bottom: 1rem; margin-bottom: 2rem; }
+  h1 { margin: 0 0 .35rem; font-size: 1.7rem; letter-spacing: -.02em; }
+  h2 { margin: 2.4rem 0 .75rem; font-size: 1.15rem; color: #0f7a4d; }
+  p, li { margin: .55rem 0; }
+  .meta { margin: 0; font-size: .875rem; color: #5a6b62; }
+  .short { padding: 1rem 1.15rem; border-left: 4px solid #0f7a4d; background: #eef7f2; border-radius: 0 6px 6px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .925rem; }
+  th, td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid #dbe6e0; }
+  th { background: #eef7f2; font-weight: 600; }
+  code { font-size: .875em; background: #eef2f0; padding: .1em .35em; border-radius: 4px; }
+  a { color: #0b6b43; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #dbe6e0; font-size: .875rem; color: #5a6b62; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e6efea; background: #101613; }
+    header, footer { border-color: #24473a; }
+    h2, a { color: #5fd39a; }
+    .short { background: #16241d; }
+    th { background: #16241d; }
+    th, td { border-color: #24473a; }
+    code { background: #1b2b23; }
+    .meta, footer { color: #93a89d; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Privacy Policy — Mohammadpur Stock Point POS</h1>
+  <p class="meta">Last updated: 1 November 2026 · Applies to the Android app <code>com.dxn.stockpoint</code> and the web app at abraar05.github.io/dxn-stockpoint</p>
+</header>
+
+<p class="short">Mohammadpur Stock Point is a point-of-sale and stock-control tool for a single DXN
+distributor's shop. It records the sales the shopkeeper enters, and nothing else. There
+are no analytics, no advertising, no trackers and no third-party SDKs. Everything the app
+records goes to the shop's own server — the one the shopkeeper runs at their own domain —
+or stays on the device.</p>
+
+<h2>1. What is collected</h2>
+<p>Only what the shopkeeper types in:</p>
+<table>
+  <tr><th>Data</th><th>Why</th><th>Where it ends up</th></tr>
+  <tr><td>Product catalogue, prices, PV points, stock counts</td><td>To price a sale and track stock</td><td>Your own server + on-device cache</td></tr>
+  <tr><td>Order records: order number, line items, totals, payment method, date, status</td><td>To keep the sales ledger and issue a receipt</td><td>Your own server + on-device cache</td></tr>
+  <tr><td>Customer name and phone number</td><td>Optional. Only stored when entered for a saved customer or a WhatsApp receipt</td><td>Your own server + on-device cache</td></tr>
+  <tr><td>DXN member ID</td><td>Optional. Used to apply member pricing</td><td>Your own server + on-device cache</td></tr>
+  <tr><td>A free-text note on an order</td><td>Optional</td><td>Your own server + on-device cache</td></tr>
+  <tr><td>Shop settings: branch name, currency, receipt footer, WhatsApp number</td><td>To render the app and receipts</td><td>Your own server + on-device cache</td></tr>
+  <tr><td>A shop PIN</td><td>To unlock the admin screens</td><td>Stored <strong>only</strong> as a bcrypt hash on your server; never on the device and never in a token</td></tr>
+</table>
+<p><strong>Not collected:</strong> location, contacts, calendar, photos, camera,
+microphone, advertising ID, device identifiers, usage analytics, crash telemetry, or
+anything about the person holding the phone.</p>
+
+<h2>2. Where it lives</h2>
+<ul>
+  <li><strong>On the device.</strong> The Android app keeps a JSON snapshot of products and
+  orders, plus a queue of sales that have not synced yet, in app-private storage
+  (<code>SharedPreferences</code> and files under the app's private directory). The web app
+  keeps the same data in the browser's <code>localStorage</code>. Both are cleared when the
+  app data is cleared.</li>
+  <li><strong>On your server.</strong> If a server URL is configured, the data is sent over
+  HTTPS to the PHP + MySQL API that the shopkeeper deployed (for example on InfinityFree).
+  That server is operated by the shop, not by the app author. The app author has no access
+  to it and receives no copy of the data.</li>
+</ul>
+
+<h2>3. Permissions and why each is needed</h2>
+<table>
+  <tr><th>Permission</th><th>Purpose</th></tr>
+  <tr><td><code>INTERNET</code></td><td>Talking to the shop's own API over HTTPS</td></tr>
+  <tr><td><code>ACCESS_NETWORK_STATE</code></td><td>Detecting whether a sale can be sent now or must be queued for later</td></tr>
+</table>
+<p>The app declares no other permissions.</p>
+
+<h2>4. When data leaves the device</h2>
+<ul>
+  <li><strong>To the shop's API</strong> — during sync, when a sale is placed, and when stock
+  or settings change. This is HTTPS to the origin the shopkeeper entered in Settings.</li>
+  <li><strong>To WhatsApp</strong> — only when the shopkeeper taps <em>Send via WhatsApp</em>.
+  The app opens a <code>https://wa.me/…</code> deep link with a pre-written receipt. Nothing
+  is sent until that tap, and the message then travels through WhatsApp under WhatsApp's own
+  privacy policy.</li>
+  <li><strong>To nobody else.</strong> There is no upload to the app author, no cloud backup
+  operated by the author, and no data broker.</li>
+</ul>
+
+<h2>5. Retention and deletion</h2>
+<ul>
+  <li>On the device: <em>Settings → Reset device</em> clears the cache, the queue and the
+  stored token.</li>
+  <li>On the server: the shopkeeper owns the MySQL database and can delete order rows,
+  customers or the whole database from phpMyAdmin.</li>
+  <li>Uninstalling the app removes all local data with it.</li>
+</ul>
+
+<h2>6. Children</h2>
+<p>The app is a business tool and is not directed at children under 13. It does not
+knowingly record any information about a child; any customer name entered is supplied by
+the shopkeeper for their own customer records.</p>
+
+<h2>7. Security</h2>
+<ul>
+  <li>Transport is HTTPS; the shipped server config redirects plain HTTP to HTTPS.</li>
+  <li>The admin PIN is verified against a bcrypt hash and exchanged for a signed, expiring
+  token; the PIN itself is never stored on the device.</li>
+  <li>Failed PIN attempts are rate-limited per IP address.</li>
+</ul>
+<p>No system is perfectly secure. If the phone is lost or shared, change the shop PIN and
+rotate <code>token_secret</code> in the server config, which invalidates every issued token
+at once.</p>
+
+<h2>8. Changes</h2>
+<p>Material changes to this policy are committed to the repository, so the
+<a href="https://github.com/abraar05/dxn-stockpoint/commits/main/PRIVACY_POLICY.md">file history</a>
+is the record of what changed and when.</p>
+
+<h2>9. Contact</h2>
+<p>Questions, corrections or a data request:
+<a href="https://github.com/abraar05/dxn-stockpoint/issues">github.com/abraar05/dxn-stockpoint/issues</a></p>
+
+<footer>
+  <p><a href="./">← Back to the Mohammadpur Stock Point app</a></p>
+</footer>
+</body>
+</html>

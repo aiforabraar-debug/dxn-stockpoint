@@ -1,0 +1,259 @@
+name: Deploy API (InfinityFree)
+
+# The PHP API is the single source of truth for both clients. This workflow
+# lints it on every push and mirrors it over FTP on main
+# into InfinityFree's htdocs.
+#
+# Required repository secrets:
+#   FTP_SERVER    e.g. ftpupload.net
+#   FTP_USERNAME  your InfinityFree account (if0_xxxxxxxx)
+#   FTP_PASSWORD  your InfinityFree account password
+#
+# Resulting endpoints:  https://<your-subdomain>.infinityfreeapp.com/api/v1/...
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - '.github/workflows/api-deploy.yml'
+  pull_request:
+    paths:
+      - 'api/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & boot the API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, mbstring, json
+          coverage: none
+
+      - name: Syntax-check every PHP file
+        run: |
+          set -e
+          find api -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
+          echo "All PHP files parse cleanly."
+
+      - name: Install schema into a throwaway SQLite database
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/ci.sqlite
+        run: php api/bin/install.php --pin=4242
+
+      - name: Verify migration preserves inventory and order history
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/ci.sqlite
+        run: php scripts/test-catalog-migration.php
+
+      - name: Boot the API and smoke-test the public surface
+        env:
+          DXN_DRIVER: sqlite
+          DXN_DB_PATH: ${{ github.workspace }}/api/storage/ci.sqlite
+          DXN_ADMIN_KEY: ci-admin-key-0123456789
+        run: |
+          set -e
+          php -S 127.0.0.1:8099 -t api/public api/public/index.php > /tmp/php.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8099/api/v1/health > /dev/null && break
+            sleep 1
+          done
+
+          php -r '
+            $base = "http://127.0.0.1:8099/api/v1";
+            $fail = 0;
+            $check = function (string $name, bool $ok) use (&$fail) {
+                echo ($ok ? "  ok   " : "  FAIL ") . $name . PHP_EOL;
+                if (!$ok) { $fail++; }
+            };
+            $get = function (string $path) use ($base) {
+                $raw = @file_get_contents($base . $path);
+                return $raw === false ? null : json_decode($raw, true);
+            };
+
+            $health = $get("/health");
+            $check("health returns success", is_array($health) && ($health["success"] ?? false) === true);
+            $check("health reports version 2.1.2", ($health["version"] ?? null) === "2.1.2");
+
+            $products = $get("/products");
+            $check("catalogue is public", is_array($products) && ($products["success"] ?? false) === true);
+            $catalogRows = $products["products"] ?? [];
+            $check("catalogue has exactly 51 active products", count($catalogRows) === 51);
+            $check("catalogue SKUs are unique", count(array_unique(array_column($catalogRows, "sku"))) === 51);
+
+            $offlineCandidates = array_values(array_filter($catalogRows, static fn (array $product): bool => (int) ($product["stock_qty"] ?? 0) > 0));
+            $offlineProduct = $offlineCandidates[0] ?? [];
+            $offlineBody = @file_get_contents($base . "/orders", false, stream_context_create([
+                "http" => [
+                    "method" => "POST",
+                    "header" => "Content-Type: application/json\r\n",
+                    "content" => json_encode([
+                        "client_uuid" => "ci-offline-sku-replay-2-1-2",
+                        "customer_name" => "CI offline SKU replay",
+                        "is_member" => true,
+                        "items" => [["product_id" => -1001, "product_sku" => $offlineProduct["sku"] ?? "", "quantity" => 1]],
+                    ]),
+                    "ignore_errors" => true,
+                ],
+            ]));
+            $offlineOrder = json_decode((string) $offlineBody, true);
+            $offlineLine = $offlineOrder["order"]["items"][0] ?? null;
+            $check("offline temporary ID replays by SKU", ($offlineOrder["success"] ?? false) === true && is_array($offlineLine) && (int) ($offlineLine["product_id"] ?? 0) > 0 && ($offlineLine["sku"] ?? "") === ($offlineProduct["sku"] ?? ""));
+
+            $sync = $get("/sync?since=0");
+            $check("sync works without a token", is_array($sync) && ($sync["success"] ?? false) === true);
+            $check("sync exposes a server revision", isset($sync["server_rev"]));
+            $check("anonymous sync hides orders", count($sync["orders"] ?? []) === 0);
+
+            $config = $get("/config");
+            $check("config exposes the branch name", isset($config["branch"]["branch_name"]));
+
+            $orders = $get("/orders");
+            $check("orders require admin", $orders === null || ($orders["success"] ?? true) === false);
+
+            exit($fail === 0 ? 0 : 1);
+          '
+          echo "Smoke suite passed."
+          cat /tmp/php.log | tail -20
+
+  deploy:
+    name: Mirror api/ to InfinityFree
+    needs: lint
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check FTP deployment credentials
+        id: ftp_credentials
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          if [ -n "$FTP_SERVER" ] && [ -n "$FTP_USERNAME" ] && [ -n "$FTP_PASSWORD" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::FTP secrets are not configured; skipping FTP upload. The API was deployed manually. Add FTP_SERVER, FTP_USERNAME, and FTP_PASSWORD repository Actions secrets to enable automatic uploads."
+          fi
+
+      # dxn.infy.click/htdocs/api/index.php + install.php + .htaccess
+      - name: Upload front controller
+        if: steps.ftp_credentials.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: ./api/public/
+          server-dir: /dxn.infy.click/htdocs/api/
+          state-name: .ftp-state-public.json
+          exclude: |
+            **/.ftp-state*.json
+            **/router.php
+
+      # dxn.infy.click/htdocs/api/src/**
+      - name: Upload application source
+        if: steps.ftp_credentials.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: ./api/src/
+          server-dir: /dxn.infy.click/htdocs/api/src/
+          state-name: .ftp-state-src.json
+
+      # dxn.infy.click/htdocs/api/config/** — config.php is created once on the host and must
+      # never be overwritten by CI (it holds the MySQL password and HMAC secret).
+      - name: Upload config scaffolding
+        if: steps.ftp_credentials.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: ./api/config/
+          server-dir: /dxn.infy.click/htdocs/api/config/
+          state-name: .ftp-state-config.json
+          exclude: |
+            **/config.php
+            **/installed.lock
+            **/.ftp-state*.json
+
+      - name: Upload storage guard
+        if: steps.ftp_credentials.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: ./api/storage/
+          server-dir: /dxn.infy.click/htdocs/api/storage/
+          state-name: .ftp-state-storage.json
+          exclude: |
+            **/*.sqlite
+            **/*.db
+            **/*.log
+            **/.ftp-state*.json
+
+      - name: Install & verify the production database
+        if: steps.ftp_credentials.outputs.ready == 'true'
+        env:
+          API_ORIGIN: https://dxn.infy.click
+        run: |
+          base="$API_ORIGIN/api/v1"
+          check() { echo "$1: $2"; }
+
+          health="$(curl -sS --max-time 20 "$base/health" 2>/dev/null || true)"
+          if [ -z "$health" ]; then
+            echo "::warning::InfinityFree did not answer a plain HTTP probe (its browser challenge blocks runner traffic). Run the one-time install URL in a browser instead."
+            echo "No health response — skipping the automatic install/verify."
+            exit 0
+          fi
+
+          check "health" "$health"
+          installed="$(echo "$health" | grep -o '"installed":[a-z]*' | cut -d: -f2 || true)"
+
+          if [ "$installed" != "true" ]; then
+            echo "::error::API is not installed yet — open $API_ORIGIN/api/install.php?key=<install_key> in a browser once (never via CI: install.php would reset the admin PIN)."
+            exit 0
+          fi
+
+          # Running the schema/migration applies backfillArtwork + backfillBranding.
+          # It requires no bearer token on an already-installed database.
+          migrate="$(curl -sS --max-time 30 -X POST "$base/migrate" 2>/dev/null || true)"
+          check "migrate" "$migrate"
+
+          config="$(curl -sS --max-time 20 "$base/config" 2>/dev/null || true)"
+          check "config" "$config"
+          echo "$config" | grep -q '"branch_name":"Mohammadpur Stock Point"' \
+            || echo "::warning::branch_name is not the Mohammadpur profile yet — a custom value is intentionally preserved; check /api/v1/config."
+
+          curl -sS --max-time 20 "$base/products" 2>/dev/null \
+            | grep -q 'abraar05.github.io/dxn-stockpoint/images/products' \
+            && echo "product photos present on the server ✔" \
+            || echo "::warning::product photos not found on the server — check /api/v1/products."
+
+          echo "Production database install/verify finished."

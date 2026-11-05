@@ -1,0 +1,443 @@
+{
+  "collectedAt": "2026-11-02",
+  "shop": {
+    "name": "Mohammadpur Stock Point",
+    "address": "H # 1, R # 11, B # A, Chandrima Model Town, Dhaka-1207",
+    "phone": "01939994578"
+  },
+  "notes": [
+    "Product photographs are used to identify genuine DXN products in this shop's catalogue.",
+    "DXN, Lingzhi, Ganozhi, Morinzhi and the DXN logo are trademarks of DXN Holdings Bhd. This shop is an independent DXN distributor.",
+    "Images were downloaded from DXN's public product catalogues (dxn2u.com and dxnbd.com) on 2026-11-02.",
+    "Files were trimmed, centred on a white canvas and re-encoded for the web (800x800) and Android app (480x480); each original source URL is kept for verification.",
+    "Some products have no official photograph in DXN's public catalogue (Aloe Vera Bathing Bar single and family pack, Apricot Facial Scrub, Hair Pack); the app shows a generated placeholder tile for those SKUs.",
+    "The Sun Screen Lotion and Body Scrub photos are representative images from the same DXN skin-care range, flagged with a note per entry."
+  ],
+  "products": [
+    {
+      "sku": "DXN-SOAP-GANO",
+      "name": "Ganozhi Soap 75g",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/ganozhi-beauty-soap.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/PC/soap_front.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-NEEM-BAR-1",
+      "name": "Neem Bathing Bar (100g)",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/neem-bathing-bar.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/01/DXN-Neem-Bathing-Beauty-Bar-Herbal-Soap-scaled.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-NEEM-BAR-3",
+      "name": "Neem Bathing Bar (Family Pack, 3x100g)",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/neem-bathing-bar.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/01/DXN-Neem-Bathing-Beauty-Bar-Herbal-Soap-scaled.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-SHAMPOO-GANO",
+      "name": "Ganozhi Shampoo 200ml",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/ganozhi-shampoo.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/PC/shampoo.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-NEEM-FACEWASH",
+      "name": "Neem Face Wash 100ml",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/neem-face-wash.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/01/DXN-Neem-Face-Wash-Natural-Skincare-scaled.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-PAPAYA-SCRUB",
+      "name": "Papaya Facial Scrub 100ml",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/papaya-facial-scrub.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/SC/SC072_DXN_Papaya_Facial_Scrub.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-ALOE-SCRUB",
+      "name": "Aloe Vera Facial Scrub 100ml",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/aloe-facial-scrub.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/SC/aloev-scrub.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-ALOE-CLEANSING-JELLY",
+      "name": "Aloe Vera Cleansing Jelly",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/aloe-cleansing-gel.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/SC/aloev-cleansing_gel.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-TOOTHPASTE-120",
+      "name": "Ganozhi Toothpaste (Malaysian) 150g",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/ganozhi-toothpaste.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/PC/toothpaste_150g.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-TOOTHPASTE-50",
+      "name": "Ganozhi Toothpaste (Malaysian) 50g",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/ganozhi-toothpaste.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/PC/toothpaste_150g.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-TOOTHPASTE-IND-150",
+      "name": "Ganozhi Toothpaste (Indian) 150g",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/ganozhi-toothpaste.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/PC/toothpaste_150g.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-TOOTHPASTE-IND-75",
+      "name": "Ganozhi Toothpaste (Indian) 75g",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/ganozhi-toothpaste.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/PC/toothpaste_150g.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-TALCUM",
+      "name": "Talcum Powder",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/talcum-powder.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/PC/talcum.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-SUNSCREEN-100",
+      "name": "Sun Screen Lotion 100ml",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/sun-screen-lotion.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/KC/watery-sun-essence.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)",
+      "note": "Representative photograph from the same DXN skin-care range; the exact SKU photo is not published."
+    },
+    {
+      "sku": "DXN-BODY-LOTION",
+      "name": "Aloe Vera Body Lotion",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/aloe-body-lotion.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/02/DXN-Aloe.V-Hand-Body-Lotion-250ml.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-BODY-SCRUB-200",
+      "name": "Body Scrub 200g",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/body-scrub.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/PCC/SC/SC132_DXN_Ootea_Bomsalt_Scrub.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=PCC",
+      "sourceName": "DXN2U (DXN official product catalogue)",
+      "note": "Representative photograph from the same DXN skin-care range; the exact SKU photo is not published."
+    },
+    {
+      "sku": "DXN-HAIR-OIL-100",
+      "name": "Hair Oil 100ml",
+      "category": "Personal Care",
+      "appImage": "docs/images/products/hair-oil.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/02/DXN-HAIR-OIL.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-RISHI-GANO-TEA-200",
+      "name": "Rishi Gano Tea 200g",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/rishi-gano-tea.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/02/RISHI-GANO-TEA.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-MASALA-TEA-100",
+      "name": "Masala Tea 100g",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/masala-tea.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/02/DXN-Masala-Tea-100g.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-LZC-BLACK-20",
+      "name": "Lingzhi Black Coffee (5g x 20)",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/lingzhi-black-coffee.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/black_coffee.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-LZC-3IN1-20",
+      "name": "Lingzhi Coffee 3-in-1",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/lingzhi-coffee-3in1.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/3in1.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-LZC-LITE-20",
+      "name": "Lingzhi Coffee 3-in-1 Lite",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/lingzhi-coffee-lite.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/lite.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-WHITE-COFFEE-20",
+      "name": "White Coffee Zhino",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/white-coffee.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/whitecoffee.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-ZHI-MOCHA-20",
+      "name": "Zhi Mocha Coffee",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/zhi-mocha-premium.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/zhimocha.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-EU-CAFE-20",
+      "name": "Eu Cafe",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/eu-cafe.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/FB127_EuCafe_Bag.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-VITA-CAFE-20",
+      "name": "Vita Cafe",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/vita-cafe.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/FB128_VitaCafe_Bag.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-CORDYCEPS-COFFEE-20",
+      "name": "Cordyceps Coffee 3-in-1",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/cordyceps-coffee.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/cordyceps.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-LIONS-MANE-COFFEE-20",
+      "name": "Lion's Mane Coffee",
+      "category": "Coffee & Tea",
+      "appImage": "docs/images/products/lions-mane-coffee.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/CF/FB215_LionsManeCoffee_Box.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-COCOZHI-500",
+      "name": "Cocozhi 500g",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/cocozhi.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/ND/cocozhi.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-SPIRULINA-CEREAL-500",
+      "name": "Spirulina Cereal 500g",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/spirulina-cereal.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/ND/spirulina_cereal.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-CORDYCEPS-CEREAL-500",
+      "name": "Cordyceps Cereal 500g",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/cordyceps-cereal.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/ND/FB069_Cordyceps_Cereal_Box.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-LEMONZHI-500",
+      "name": "Lemonzhi 500g",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/lemonzhi.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/TE/lemonzhi.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-ZHI-YOBITE-30",
+      "name": "Zhi Yobite 30g",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/zhi-yobite.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/FB310_ZhiYobite.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-LINA-YOBITE-30",
+      "name": "Lina Yobite 30g",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/lina-yobite.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/FB311_LinaYobite.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-APPLE-ENZYME-750",
+      "name": "Apple Enzyme Drink 750ml",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/apple-enzyme.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FJ/bev_appleEnzyme-front.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-APPLE-JAM-300",
+      "name": "Apple Fermented Jam 300g",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/apple-jam.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/FB237-Apple-Fermented-Jam.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-LIONS-MANE-OOCHA",
+      "name": "Lion's Mane Oocha",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/lions-mane-ooocha.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/TE/FB250_LionsManeOocha.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-LIONS-MANE-MATCHA",
+      "name": "Lion's Mane Lemon Matcha",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/lions-mane-lemon-matcha.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/TE/FB315_Lion-Mane_Lemon_Matcha.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-SPIRUDLE-PLAIN",
+      "name": "Spirudle",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/spirudle.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/FB173_DXN_Spirudle.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-GOJI-BERRY",
+      "name": "Goji Berry",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/goji-berry.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/gojiberry.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-OOCHA-NOODLES",
+      "name": "Oocha Noodles",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/oocha-noodles.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/FB349_FB350_DXN_Oocha_Noodle_Series.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-OOCHA-NOODLES-TYF",
+      "name": "Oocha Noodles (TYF)",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/oocha-noodles-tyf.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/FB349_Oocha_Noodle_TomYam.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-VEGGIE-NOODLE",
+      "name": "Veggie Noodle",
+      "category": "Food & Drink",
+      "appImage": "docs/images/products/veggie-noodle.jpg",
+      "sourceImage": "https://www.dxn2u.com/product/images/FFB/FD/FB172_Ganoodle.jpg",
+      "sourcePage": "https://www.dxn2u.com/product/products.php?cat_id=FFB",
+      "sourceName": "DXN2U (DXN official product catalogue)"
+    },
+    {
+      "sku": "DXN-RG-POWDER-50",
+      "name": "RG Powder 50g",
+      "category": "Supplements",
+      "appImage": "docs/images/products/rg-powder-50.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/01/DXN-Reishi-Gano-RG-Property-Lingzhi.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-GL-POWDER-80",
+      "name": "GL Powder 80g",
+      "category": "Supplements",
+      "appImage": "docs/images/products/gl-powder-80.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/01/DXN-Ganogelium-GL-Powder-Lingzhi-Mycelium.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-CORDYCEPS-POWDER-30",
+      "name": "Cordyceps Powder 30g",
+      "category": "Supplements",
+      "appImage": "docs/images/products/cordyceps-powder-30.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/01/DXN-Cordyceps-Mushroom-Powder-30g.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    },
+    {
+      "sku": "DXN-LIONS-MANE-POWDER-30",
+      "name": "Lion's Mane Powder 30g",
+      "category": "Supplements",
+      "appImage": "docs/images/products/lions-mane-powder-30.jpg",
+      "sourceImage": "https://www.dxnbd.com/wp-content/uploads/2026/01/DXN-Lions-Mane-Mushroom-Powder-30g.jpg",
+      "sourcePage": "https://www.dxnbd.com/shop/",
+      "sourceName": "DXN Bangladesh (dxnbd.com official site)"
+    }
+  ]
+}

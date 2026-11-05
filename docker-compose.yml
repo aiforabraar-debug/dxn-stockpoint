@@ -1,0 +1,98 @@
+# =============================================================================
+# DXN Stockpoint Enterprise — Docker Compose
+# Full local development stack: API + PostgreSQL + Redis
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ── PostgreSQL Database ────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: dxn-stockpoint-db
+    environment:
+      POSTGRES_USER: dxn_user
+      POSTGRES_PASSWORD: dxn_pass
+      POSTGRES_DB: dxn_stockpoint
+    volumes:
+      - dxn_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dxn_user -d dxn_stockpoint"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dxn-network
+
+  # ── Backend API ────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: enterprise/docker/Dockerfile.backend
+    container_name: dxn-stockpoint-backend
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: "postgresql://dxn_user:dxn_pass@db:5432/dxn_stockpoint?schema=public"
+      JWT_ACCESS_SECRET: dxn-access-secret-change-in-production-min-32-chars
+      JWT_REFRESH_SECRET: dxn-refresh-secret-change-in-production-min-32-chars
+      ADMIN_PIN: 2468
+      ADMIN_API_KEY: dxn_admin_key_change_in_production
+      CORS_ORIGINS: http://localhost:5173
+      LOG_LEVEL: debug
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./enterprise/apps/backend/src:/app/src
+      - ./enterprise/apps/backend/tsconfig.json:/app/tsconfig.json
+    command: npx tsx watch src/server.ts
+    networks:
+      - dxn-network
+
+  # ── Frontend ───────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: enterprise/docker/Dockerfile.frontend
+    container_name: dxn-stockpoint-frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:4000
+      NODE_ENV: development
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./enterprise/apps/frontend/src:/app/src
+      - ./enterprise/apps/frontend/vite.config.ts:/app/vite.config.ts
+      - ./enterprise/apps/frontend/package.json:/app/package.json
+      - ./enterprise/apps/frontend/tailwind.config.js:/app/tailwind.config.js
+      - ./enterprise/apps/frontend/index.html:/app/index.html
+      - ./enterprise/apps/frontend/tsconfig.json:/app/tsconfig.json
+    command: npm run dev
+    networks:
+      - dxn-network
+
+  # ── Redis (optional, for caching & rate limiting in production) ────────────
+  redis:
+    image: redis:7-alpine
+    container_name: dxn-stockpoint-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - dxn_redis_data:/data
+    networks:
+      - dxn-network
+
+volumes:
+  dxn_db_data:
+  dxn_redis_data:
+
+networks:
+  dxn-network:
+    driver: bridge

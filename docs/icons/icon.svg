@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Mohammadpur Stock Point DXN logo">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5e6a8"/>
+      <stop offset=".18" stop-color="#d4af37"/>
+      <stop offset=".34" stop-color="#f7f7f7"/>
+      <stop offset=".5" stop-color="#2a2a2a"/>
+      <stop offset=".66" stop-color="#b30000"/>
+      <stop offset=".82" stop-color="#e6c200"/>
+      <stop offset="1" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <radialGradient id="shine" cx=".35" cy=".25" r=".8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".9"/>
+      <stop offset=".55" stop-color="#f7f7f7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="#ffffff"/>
+  <circle cx="256" cy="256" r="238" fill="none" stroke="#242424" stroke-width="6"/>
+  <circle cx="256" cy="256" r="232" fill="none" stroke="url(#metal)" stroke-width="28"/>
+  <circle cx="256" cy="256" r="211" fill="none" stroke="#b48a28" stroke-width="2"/>
+  <circle cx="256" cy="256" r="207" fill="#f7f7f7"/>
+  <circle cx="256" cy="256" r="207" fill="url(#shine)"/>
+
+  <!-- red oval -->
+  <ellipse cx="300" cy="228" rx="64" ry="80" fill="#e30613"/>
+
+  <!-- green wheat mark -->
+  <g fill="#1e9e3e">
+    <rect x="149" y="183" width="7" height="79" rx="3.5"/>
+    <rect x="183" y="159" width="7" height="103" rx="3.5"/>
+    <rect x="217" y="195" width="7" height="67" rx="3.5"/>
+    <g>
+      <path d="M152.5 208c-14-18-24-31-31-48 18 3 33 15 40 34z"/>
+      <path d="M152.5 208c14-18 24-31 31-48-18 3-33 15-40 34z"/>
+      <path d="M152.5 236c-14-18-24-31-31-48 18 3 33 15 40 34z"/>
+      <path d="M152.5 236c14-18 24-31 31-48-18 3-33 15-40 34z"/>
+      <path d="M152.5 183c0-20 1-35 6-51 8 16 9 33 5 53z"/>
+    </g>
+    <g>
+      <path d="M186.5 184c-16-21-27-36-35-56 21 4 38 18 46 40z"/>
+      <path d="M186.5 184c16-21 27-36 35-56-21 4-38 18-46 40z"/>
+      <path d="M186.5 216c-16-21-27-36-35-56 21 4 38 18 46 40z"/>
+      <path d="M186.5 216c16-21 27-36 35-56-21 4-38 18-46 40z"/>
+      <path d="M186.5 156c0-23 1-40 7-58 9 18 10 38 5 61z"/>
+    </g>
+    <g>
+      <path d="M220.5 216c-13-17-22-29-28-45 17 3 31 14 37 32z"/>
+      <path d="M220.5 216c13-17 22-29 28-45-17 3-31 14-37 32z"/>
+      <path d="M220.5 242c-13-17-22-29-28-45 17 3 31 14 37 32z"/>
+      <path d="M220.5 242c13-17 22-29 28-45-17 3-31 14-37 32z"/>
+      <path d="M220.5 193c0-18 1-32 5-47 8 15 8 31 4 49z"/>
+    </g>
+  </g>
+
+  <!-- blue baseline -->
+  <rect x="136" y="256" width="240" height="10" rx="5" fill="#1b1464"/>
+
+  <!-- DXN wordmark -->
+  <text x="256" y="390" text-anchor="middle" fill="#1b1464"
+    font-family="'Plus Jakarta Sans', 'Arial Black', Arial, sans-serif"
+    font-weight="800" font-size="100" letter-spacing="8">DXN</text>
+</svg>

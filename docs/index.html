@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mohammadpur Stock Point — DXN POS, inventory &amp; live sync</title>
+<meta name="description" content="Mohammadpur Stock Point: DXN point of sale, inventory, PV tracking and WhatsApp checkout. Works offline on the web and on Android, and syncs both through one API.">
+<meta name="theme-color" content="#054A29">
+<meta name="color-scheme" content="light">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="alternate icon" href="icons/favicon.ico">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MSP Stockpoint">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header__inner">
+    <a class="brand" href="#/catalog" aria-label="Mohammadpur Stock Point home">
+      <img class="brand__logo" src="icons/logo-mark-96.png" alt="" width="40" height="40">
+      <span class="brand__text">
+        <strong id="branchName">Mohammadpur Stock Point</strong>
+        <span id="branchTag">Loading…</span>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__btn" href="#/catalog" data-route="catalog"><i data-icon="grid"></i> Catalogue</a>
+      <a class="nav__btn" href="#/orders" data-route="orders"><i data-icon="receipt"></i> Orders</a>
+      <a class="nav__btn" href="#/admin" data-route="admin"><i data-icon="chart"></i> Admin</a>
+      <a class="nav__btn" href="#/settings" data-route="settings"><i data-icon="settings"></i> Settings</a>
+    </nav>
+
+    <div class="header__spacer"></div>
+
+    <button class="sync-pill" id="syncPill" data-state="idle" type="button" title="Sync status — tap to sync now">
+      <i class="sync-dot"></i><span class="sync-text" id="syncText">Starting…</span>
+    </button>
+
+    <button class="icon-btn" id="cartBtn" type="button" title="Cart" aria-label="Open cart">
+      <i data-icon="cart"></i>
+      <span class="icon-btn__badge" id="cartCount" hidden>0</span>
+    </button>
+
+    <button class="icon-btn" id="accountBtn" type="button" title="Shop sign-in" aria-label="Account">
+      <i data-icon="user"></i>
+    </button>
+  </div>
+</header>
+
+<div class="offline-bar" id="offlineBar">
+  <i data-icon="alert"></i>
+  <span>Offline — sales are saved on this device and will sync when the connection returns.</span>
+</div>
+
+<main id="view" aria-live="polite">
+  <div class="product-grid">
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+  </div>
+</main>
+
+<nav class="bottom-nav" aria-label="Sections">
+  <a class="bottom-nav__btn" href="#/catalog" data-route="catalog"><i data-icon="grid"></i><span>Catalogue</span></a>
+  <a class="bottom-nav__btn" href="#/orders" data-route="orders"><i data-icon="receipt"></i><span>Orders</span></a>
+  <a class="bottom-nav__btn" href="#/admin" data-route="admin"><i data-icon="chart"></i><span>Admin</span></a>
+  <a class="bottom-nav__btn" href="#/settings" data-route="settings"><i data-icon="settings"></i><span>Settings</span></a>
+</nav>
+
+<div class="overlay" id="overlay" hidden></div>
+
+<aside class="drawer" id="cartDrawer" aria-label="Cart" aria-hidden="true">
+  <div class="drawer__head">
+    <h3>Current sale</h3>
+    <button class="icon-btn" id="cartClose" type="button" aria-label="Close cart"><i data-icon="close"></i></button>
+  </div>
+  <div class="drawer__body" id="cartBody"></div>
+  <div class="drawer__foot" id="cartFoot"></div>
+</aside>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal__panel" id="modalPanel"></div>
+</div>
+
+<div class="toast-stack" id="toastStack" aria-live="assertive"></div>
+
+<noscript>
+  <p style="padding:24px;text-align:center">Mohammadpur Stock Point needs JavaScript to run the point of sale.</p>
+</noscript>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

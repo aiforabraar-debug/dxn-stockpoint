@@ -1,0 +1,48 @@
+# DXN Stockpoint API — Apache configuration (InfinityFree / cPanel friendly)
+
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS when the host reports plain HTTP (InfinityFree terminates TLS
+  # at its proxy, hence the X-Forwarded-Proto check).
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1) [NC]
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Everything that is not a real file goes to the front controller.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Data, backups and docs must never be downloadable. Source folders carry
+# their own deny-all .htaccess files.
+<FilesMatch "\.(sql|sqlite|sqlite3|db|lock|md|sample|bak|log|ini)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "no-referrer"
+  Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Api-Key"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/json text/plain text/html
+</IfModule>
+
+# Never cache API responses at the proxy/CDN layer.
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>

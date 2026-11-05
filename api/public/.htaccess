@@ -13,6 +13,11 @@ DirectoryIndex index.php
   RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1) [NC]
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+  # Apache/LiteSpeed strips the Authorization header on some shared hosts.
+  # Re-expose it so bearer tokens reach PHP (X-Api-Key already survives).
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
   # Everything that is not a real file goes to the front controller.
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

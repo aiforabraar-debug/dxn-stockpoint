@@ -75,7 +75,18 @@ final class Request
     public static function header(string $name): ?string
     {
         $key = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
-        $value = $_SERVER[$key] ?? null;
+        $value = $_SERVER[$key] ?? $_SERVER['REDIRECT_' . $key] ?? null;
+
+        if ($value === null) {
+            $headers = function_exists('getallheaders') ? getallheaders() : [];
+            foreach ($headers as $header => $headerValue) {
+                if (strcasecmp((string) $header, $name) === 0) {
+                    $value = $headerValue;
+                    break;
+                }
+            }
+        }
+
         if ($value === null && strtoupper($name) === 'CONTENT_TYPE') {
             $value = $_SERVER['CONTENT_TYPE'] ?? null;
         }

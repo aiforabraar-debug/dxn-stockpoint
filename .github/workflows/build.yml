@@ -93,21 +93,22 @@ jobs:
 
             The PHP 8 + MySQL API is the single source of truth, and the web app
             and the Android app both run from it with revision-based live sync
-            and an offline outbox. The API now runs on ByetHost free hosting.
+            and an offline outbox. The API and web app run on InfinityFree at https://dxn.10001mb.com/.
 
             **Install the APK:** `dxn-stockpoint-2.2.0-debug.apk` (sideload) or
             upload `dxn-stockpoint-2.2.0.aab` to Google Play.
 
-            **Web app:** https://aiforabraar-debug.github.io/dxn-stockpoint/
+            **Web app:** https://dxn.10001mb.com/
 
             ### What is in this build
-            - Connects out of the box — the live shop API (dxnstock.byethost7.com) is the built-in default
+            - Connects out of the box — the live shop API (dxn.10001mb.com) is the built-in default
             - API returns the full 51-SKU catalogue by default (per_page=200)
             - New Mohammadpur Stock Point logo, app icon and splash artwork
             - The shop's full 2026 DXN price list: 51 SKUs with exact DP/PV/MRP
             - Official DXN product photos for 47 SKUs (bundled offline; 4 use a generated tile)
             - Product image previews in the catalogue, cart and admin screens
             - Shop PIN sign-in (HMAC bearer token, 30-day expiry)
+- Native InfinityFree challenge solver, so the API works from the app
             - Offline-first: cached catalogue, queued sales, automatic replay
             - Idempotent orders (`client_uuid`) — a retry never double-books
             - Incremental sync on a server-wide revision counter
@@ -115,7 +116,7 @@ jobs:
             - PWA installable web app sharing the exact same data
 
             ### First run
-            1. The app connects to the live shop API automatically
+            1. The app connects to https://dxn.10001mb.com/ automatically
             2. Tap the sync strip until it reads **Live** (only if it is offline)
             3. Unlock Admin with the shop PIN to manage stock and orders
           files: dist/*

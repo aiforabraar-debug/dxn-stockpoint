@@ -3,13 +3,13 @@
 An offline-first stockpoint POS for Mohammadpur Stock Point, a DXN distributor -
 **one PHP API, two clients that stay in sync**: an installable web app and a
 native Android app. Everything runs on free, forever tiers: GitHub Pages, GitHub
-Releases, ByetHost (PHP 8 + MySQL), and Google Play.
+Releases, InfinityFree (PHP 8 + MySQL), and Google Play.
 
 | | |
 |---|---|
-| 🌐 Web app | https://aiforabraar-debug.github.io/dxn-stockpoint/ |
+| 🌐 Web app | https://dxn.10001mb.com/ (the GitHub Pages URL redirects here) |
 | 📱 Android | GitHub Releases → `dxn-stockpoint-2.2.0-debug.apk` |
-| 🔌 API | ByetHost - `https://dxnstock.byethost7.com/api/v1/...` |
+| 🔌 API | InfinityFree - `https://dxn.10001mb.com/api/v1/...` |
 | 🔒 Privacy | https://aiforabraar-debug.github.io/dxn-stockpoint/privacy.html |
 
 ---
@@ -19,7 +19,7 @@ Releases, ByetHost (PHP 8 + MySQL), and Google Play.
 ```
         ┌─────────────────────────┐
         │  PHP 8 + MySQL  API     │   single source of truth
-        │  api/  (ByetHost)       │   revision counter on every row
+        │  api/  (InfinityFree)   │   revision counter on every row
         └─────────────────────────┘
                     │  GET /api/v1/sync?since=<rev>
         ┌───────────┴───────────┐
@@ -51,21 +51,37 @@ Releases, ByetHost (PHP 8 + MySQL), and Google Play.
 | `docs/` | The web app (ES modules, no build step) + PWA manifest & service worker |
 | `android/DXNStockpoint/` | Kotlin + Jetpack Compose app |
 | `scripts/` | Local dev server, toolchain provisioning, verification suites |
-| `.github/workflows/` | Pages deploy, ByetHost FTP deploy, APK/AAB build |
+| `.github/workflows/` | Pages mirror, InfinityFree FTP deploy, APK/AAB build |
 
 > `backend/` is the retired v1 Node/SQLite server. It is kept for reference only;
 > nothing in v2 talks to it.
 
 ## Run it locally
 
-```powershell
-# API on :8099 and the web app on :8100, SQLite, PIN 2468
-powershell -ExecutionPolicy Bypass -File scripts/dev.ps1 -Fresh -Pin 2468
+**Windows (one click):**
+
+```bat
+scripts\windows-server.cmd
 ```
 
-Open http://127.0.0.1:8100, go to **Settings → Connection**, paste
-`http://127.0.0.1:8099`, press **Test connection**, then **Save & sync**.
-The sync pill in the header turns green and reads **Live**.
+This runs `scripts\dev.ps1 -Lan`: API on `:8099`, web app on `:8100`, SQLite,
+PIN `2468`, and the LAN address printed for the Android app. Open
+<http://127.0.0.1:8100>; the API base is pre-filled automatically. The servers
+keep running after the window closes.
+
+**Android / Termux (24/7):**
+
+```bash
+pkg install php php-sqlite3 git
+git clone https://github.com/aiforabraar-debug/dxn-stockpoint.git
+cd dxn-stockpoint
+./scripts/android-server.sh start
+# API http://127.0.0.1:8099/ · web app http://127.0.0.1:8099/app/ · PIN 2468
+```
+
+`./scripts/android-server.sh install-boot` makes it start with Termux:Boot.
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for LAN, tunnel and Windows
+Firewall details.
 
 Build the Android app:
 
@@ -77,7 +93,8 @@ powershell -ExecutionPolicy Bypass -File scripts/build-android.ps1
 ```
 
 The emulator reaches the local API at `http://10.0.2.2:8099` (the app's dev
-fallback). Fresh installs default to the live ByetHost API.
+fallback). Fresh installs default to the live InfinityFree API at
+https://dxn.10001mb.com/.
 
 ### Prove it is actually in sync
 
@@ -102,16 +119,18 @@ CI pipeline (`.github/workflows/`):
 |----------|-------------|
 | `test.yml` | Runs the Node E2E suite (55 checks) against a throwaway SQLite database |
 | `pages.yml` | Publishes `docs/` to GitHub Pages on every push to `main` |
-| `api-deploy.yml` | Lints PHP, installs schema, smoke-tests, then FTP-deploys to ByetHost |
+| `api-deploy.yml` | Lints PHP, installs schema, smoke-tests, then FTP-deploys the API and web app to InfinityFree |
 | `build.yml` | Compiles the Android APK + AAB and publishes a GitHub Release |
 
 ### Deployment checklist
 
-1. **API** → ByetHost. Fill `api/config/config.php`, upload `api/`, open `./api/install.php?key=<install_key>` once.
-2. **Web** → push to `main`; `pages.yml` publishes `docs/` to GitHub Pages.
+1. **API + web** → InfinityFree. The workflow generates `api/config/config.php` from secrets and deploys both `api/` and `docs/` over FTP. The first run installs MySQL and seeds the catalogue automatically.
+2. **Web mirror** → push to `main`; `pages.yml` publishes a redirecting copy to GitHub Pages.
 3. **Android** → push to `main`; `build.yml` publishes the APK/AAB to GitHub Releases.
 4. **Secrets** (repo Settings → Secrets and variables → Actions):
-   - `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` - for automatic ByetHost API upload
+   - `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` - InfinityFree FTP upload
+   - `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` - InfinityFree MySQL
+   - `DXN_ADMIN_KEY`, `DXN_INSTALL_KEY`, `DXN_TOKEN_SECRET` - API secrets (generated once)
    - `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` - for signed release APK/AAB (required for Google Play)
 
 ## Using the app
@@ -131,16 +150,18 @@ Admin screens need the shop PIN. It is set when the API is installed
 
 Full walkthrough in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The short version:
 
-1. **API** → ByetHost. Fill in `api/config/config.php`, upload, open
-   `./api/install.php?key=<install_key>` once.
-2. **Web** → push to `main`; `pages.yml` publishes `docs/` to GitHub Pages.
+1. **API + web** → push to `main`. The workflow writes `api/config/config.php`
+   from secrets, deploys both folders, and installs MySQL on the first run.
+2. **Web mirror** → push to `main`; `pages.yml` publishes a redirecting copy to GitHub Pages.
 3. **Android** → push to `main`; `build.yml` publishes the APK/AAB to Releases.
    Upload the `.aab` to Google Play, or sideload the `.apk`.
 4. Point both clients at the same API origin - they now share live data.
 
-> **Why not InfinityFree?** Its anti-bot JavaScript challenge blocks native
-> Android clients and CORS preflights (`OPTIONS`), so a native app can never
-> reach it. ByetHost serves the same PHP/MySQL stack with no challenge.
+> **The InfinityFree challenge.** The host puts a JavaScript `/aes.js` puzzle in
+> front of every URL. The browser solves it automatically on the custom domain,
+> so the web app and API are same-origin. The Android client includes a native
+> AES solver (`ChallengeInterceptor`) that obtains the `__test` cookie and
+> retries, so bearer-token requests also work.
 
 ## API surface
 

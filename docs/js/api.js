@@ -9,7 +9,19 @@
 const BASE_KEY = 'dxn.apiBase.v2';
 const DEFAULT_BASE = (() => {
   const host = globalThis.location?.hostname || '';
-  if (host === 'dxn.10001mb.com') return globalThis.location.origin;
+  const origin = globalThis.location?.origin || 'https://dxn.10001mb.com';
+  if (host === 'dxn.10001mb.com' || host.endsWith('.trycloudflare.com')) return origin;
+
+  const isLocal = host === 'localhost' || host === '127.0.0.1'
+    || /^10\./.test(host)
+    || /^192\.168\./.test(host)
+    || /^172\.(1[6-9]|2\d|3[01])\./.test(host);
+
+  if (isLocal) {
+    // The Android/Termux server serves the app and API from the same origin.
+    // The Windows dev script serves the app on :8100 and the API on :8099.
+    return globalThis.location?.port === '8100' ? `http://${host}:8099` : origin;
+  }
   return 'https://dxn.10001mb.com';
 })();
 const TOKEN_KEY = 'dxn.token.v2';

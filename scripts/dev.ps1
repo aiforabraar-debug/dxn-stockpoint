@@ -11,6 +11,7 @@ param(
     [int]$ApiPort = 8099,
     [int]$WebPort = 8100,
     [switch]$Fresh,
+    [switch]$Lan,
     [string]$Pin = "2468"
 )
 
@@ -44,21 +45,24 @@ $env:DXN_DEBUG = "1"
 
 if ($Fresh -and (Test-Path $env:DXN_DB_PATH)) { Remove-Item $env:DXN_DB_PATH -Force }
 
+$apiHost = if ($Lan) { "0.0.0.0" } else { "127.0.0.1" }
+$webHost = if ($Lan) { "0.0.0.0" } else { "127.0.0.1" }
+
 Write-Host "Installing schema (idempotent)…"
 & $php @flags (Join-Path $apiDir "bin\install.php") "--pin=$Pin" | Write-Host
 
 $apiLog = Join-Path $storage "server.out.log"
 $apiErr = Join-Path $storage "server.err.log"
 
-Write-Host "Starting API on http://127.0.0.1:$ApiPort"
+Write-Host "Starting API on http://${apiHost}:${ApiPort}"
 $api = Start-Process -FilePath $php `
-    -ArgumentList (@($flags) + @("-S", "127.0.0.1:$ApiPort", "-t", (Join-Path $apiDir "public"), (Join-Path $apiDir "public\index.php"))) `
+    -ArgumentList (@($flags) + @("-S", "${apiHost}:${ApiPort}", "-t", (Join-Path $apiDir "public"), (Join-Path $apiDir "public\index.php"))) `
     -WorkingDirectory $root -RedirectStandardOutput $apiLog -RedirectStandardError $apiErr `
     -WindowStyle Hidden -PassThru
 
-Write-Host "Starting web app on http://127.0.0.1:$WebPort"
+Write-Host "Starting web app on http://${webHost}:${WebPort}"
 $web = Start-Process -FilePath $php `
-    -ArgumentList (@($flags) + @("-S", "127.0.0.1:$WebPort", "-t", $docsDir)) `
+    -ArgumentList (@($flags) + @("-S", "${webHost}:${WebPort}", "-t", $docsDir)) `
     -WorkingDirectory $root -WindowStyle Hidden -PassThru
 
 Start-Sleep -Milliseconds 900
@@ -72,6 +76,17 @@ try {
 Write-Host ""
 Write-Host "Open   http://127.0.0.1:$WebPort"
 Write-Host "API    http://127.0.0.1:$ApiPort/api/v1/health"
+if ($Lan) {
+    $addresses = [System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName()) |
+        Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } |
+        ForEach-Object { $_.IPAddressToString } |
+        Where-Object { $_ -notlike '127.*' } |
+        Select-Object -Unique
+    foreach ($ip in $addresses) {
+        Write-Host "LAN    http://${ip}:${WebPort}  (API base http://${ip}:${ApiPort}/)"
+    }
+    Write-Host "Android Settings → Server URL → http://<this-PC-LAN-IP>:${ApiPort}/"
+}
 Write-Host "PIN    $Pin"
 Write-Host ""
 Write-Host "Process ids: api=$($api.Id) web=$($web.Id)"

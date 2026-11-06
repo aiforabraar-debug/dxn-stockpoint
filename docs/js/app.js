@@ -56,9 +56,11 @@ function updateChrome() {
   if (pill) {
     pill.dataset.state = syncState === 'error' ? 'offline' : syncState;
     const text = $('#syncText');
-    if (text) text.textContent = syncLabel(syncState);
+    if (text) text.textContent = syncState === 'online'
+      ? `${syncLabel(syncState)} · rev ${int(store.state.rev)}`
+      : syncLabel(syncState);
     pill.title = hasBase()
-      ? `Revision ${int(store.state.rev)} · tap to sync now`
+      ? `API: ${getBase()} · Revision ${int(store.state.rev)} · tap to sync now`
       : 'Not connected — tap to set the API address';
   }
 
@@ -163,6 +165,9 @@ function openLogin() {
     onMount(panel) {
       const form = panel.querySelector('#loginForm');
       const button = panel.querySelector('#loginBtn');
+      const pin = panel.querySelector('#pinInput');
+      pin?.focus();
+      pin?.select();
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const pin = panel.querySelector('#pinInput').value.trim();

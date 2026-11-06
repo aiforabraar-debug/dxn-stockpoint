@@ -137,7 +137,8 @@ function deviceCard() {
         </div>
       </div>
 
-      <button class="btn btn--danger" type="button" id="resetBtn">${icon('trash', 16)} Reset this device</button>
+        ${outbox.length ? `<button class="btn btn--warn" type="button" id="clearQueueBtn">${icon('trash', 14)} Clear ${int(outbox.length)} queued sales</button>` : ''}
+        <button class="btn btn--danger" type="button" id="resetBtn">${icon('trash', 16)} Reset this device</button>
     </div>
   `;
 }
@@ -502,5 +503,19 @@ function bind(root) {
       if (key.startsWith('dxn.') && !keep.includes(key)) localStorage.removeItem(key);
     }
     location.reload();
+  });
+
+  root.querySelector('#clearQueueBtn')?.addEventListener('click', async () => {
+    const ok = await confirmAction({
+      title: 'Clear queued sales?',
+      message: `This removes ${int(store.state.outbox.length)} unsent sale(s) from this device. They will not be sent to the server.`,
+      confirmLabel: 'Clear queue',
+      danger: true,
+    });
+    if (!ok) return;
+    store.state.outbox = [];
+    store.persistCache();
+    store.notify();
+    toast('Queued sales cleared.');
   });
 }

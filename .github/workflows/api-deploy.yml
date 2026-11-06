@@ -258,6 +258,12 @@ jobs:
             **/*.log
             **/.ftp-state*.json
 
+      # Force-delete CI state so every doc file is re-uploaded (InfinityFree
+      # FTP can serve stale files otherwise).
+      - name: Reset FTP deploy state
+        if: steps.credentials.outputs.ready == 'true'
+        run: rm -f .ftp-state-*.json
+
       # The installable PWA lives at the domain root.
       - name: Upload web app
         if: steps.credentials.outputs.ready == 'true'
@@ -275,6 +281,16 @@ jobs:
           exclude: |
             **/DEPLOYMENT.md
             **/.ftp-state*.json
+
+      # Critical single-file re-upload in case the action skips an unchanged
+      # timestamp on a file whose contents changed.
+      - name: Force re-upload sw.js
+        if: steps.credentials.outputs.ready == 'true'
+        run: |
+          curl -sS -T docs/sw.js \
+            -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+            "ftp://${{ secrets.FTP_SERVER }}/dxn.10001mb.com/htdocs/sw.js" \
+            --ftp-pasv
 
       - name: Install and verify production
         if: steps.credentials.outputs.ready == 'true'

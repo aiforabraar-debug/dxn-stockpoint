@@ -19,14 +19,14 @@ data class Product(
     @SerializedName("low_stock_at") val lowStockAt: Int = 5,
     @SerializedName("image_url") val imageUrl: String? = null,
     @SerializedName("is_active") val isActive: Int = 1,
-    /** Convenience: 1 means active, 0 means archived. */
-    val isActiveBoolean: Boolean get() = isActive == 1,
     @SerializedName("created_at") val createdAt: String = "",
     @SerializedName("updated_at") val updatedAt: String = "",
     val rev: Int = 0
 ) {
     val isLowStock: Boolean get() = stockQty <= lowStockAt
     val isOutOfStock: Boolean get() = stockQty <= 0
+    /** Convenience: 1 means active, 0 means archived. */
+    val isActiveBoolean: Boolean get() = isActive == 1
 
     /** Price shown to the caller for a given customer tier. */
     fun price(isMember: Boolean): Double = if (isMember) memberPrice else retailPrice

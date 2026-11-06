@@ -18,7 +18,9 @@ data class Product(
     @SerializedName("stock_qty") val stockQty: Int = 0,
     @SerializedName("low_stock_at") val lowStockAt: Int = 5,
     @SerializedName("image_url") val imageUrl: String? = null,
-    @SerializedName("is_active") val isActive: Boolean = true,
+    @SerializedName("is_active") val isActive: Int = 1,
+    /** Convenience: 1 means active, 0 means archived. */
+    val isActiveBoolean: Boolean get() = isActive == 1,
     @SerializedName("created_at") val createdAt: String = "",
     @SerializedName("updated_at") val updatedAt: String = "",
     val rev: Int = 0

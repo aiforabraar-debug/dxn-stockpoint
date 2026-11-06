@@ -134,7 +134,7 @@ class StockpointViewModel(app: Application) : AndroidViewModel(app) {
         val q = _searchQuery.value.trim().lowercase()
         val cat = _selectedCategory.value
         return all.asSequence()
-            .filter { it.isActive }
+            .filter { it.isActiveBoolean }
             .filter { cat == "All" || it.category.equals(cat, ignoreCase = true) }
             .filter {
                 q.isEmpty() ||
@@ -149,7 +149,7 @@ class StockpointViewModel(app: Application) : AndroidViewModel(app) {
     /** Categories for the filter chips, derived from live stock. */
     fun categories(): List<String> =
         listOf("All") + (_products.value.data ?: emptyList())
-            .filter { it.isActive }
+            .filter { it.isActiveBoolean }
             .map { it.category }
             .distinct()
             .sorted()

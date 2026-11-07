@@ -1,3 +1,5 @@
+package com.dxn.stockpoint.member.data.model
+
 data class MemberProfile(
     val id: Int,
     val memberId: String,

@@ -1,3 +1,5 @@
+package com.dxn.stockpoint.member.data.repository
+
 import com.dxn.stockpoint.member.data.local.TokenStore
 import com.dxn.stockpoint.member.data.model.*
 import kotlinx.coroutines.Dispatchers

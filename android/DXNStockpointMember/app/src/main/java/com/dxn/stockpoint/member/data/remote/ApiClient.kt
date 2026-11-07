@@ -1,3 +1,5 @@
+package com.dxn.stockpoint.member.data.remote
+
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

@@ -55,6 +55,7 @@ jobs:
           DXN_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           DXN_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          chmod +x gradlew
           ./gradlew assembleDebug assembleRelease bundleRelease --no-daemon --stacktrace
 
       - name: Build member app (debug + release + bundle)
@@ -64,6 +65,7 @@ jobs:
           DXN_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           DXN_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          chmod +x gradlew
           ./gradlew assembleDebug assembleRelease bundleRelease --no-daemon --stacktrace
 
       - name: Collect artefacts

@@ -56,7 +56,7 @@ jobs:
           DXN_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          ./gradlew clean assembleDebug assembleRelease bundleRelease --no-daemon --stacktrace
+          ./gradlew assembleDebug assembleRelease bundleRelease --no-daemon --stacktrace
 
       - name: Build member app (debug + release + bundle)
         working-directory: android/DXNStockpointMember

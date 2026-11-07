@@ -1,12 +1,13 @@
+package com.dxn.stockpoint.member.data.local
+
 import android.content.Context
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.preferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.PreferencesDataStore
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 object TokenStore {
     private const val FILE_NAME = "member_token_store"
@@ -14,7 +15,7 @@ object TokenStore {
     private val MEMBER_ID_KEY = stringPreferencesKey("member_id")
     private val MEMBER_NAME_KEY = stringPreferencesKey("member_name")
 
-    private var dataStore: androidx.datastore.preferences.core.PreferencesDataStore? = null
+    private var dataStore: PreferencesDataStore? = null
 
     fun init(context: Context) {
         if (dataStore == null) {
@@ -22,7 +23,7 @@ object TokenStore {
         }
     }
 
-    val instance: androidx.datastore.preferences.core.PreferencesDataStore
+    val instance: PreferencesDataStore
         get() = dataStore ?: error("TokenStore not initialized. Call init(context) first.")
 
     suspend fun saveToken(token: String, memberId: String, memberName: String) {
@@ -35,9 +36,9 @@ object TokenStore {
 
     suspend fun clearToken() {
         instance.edit { preferences ->
-            preferences[TOKEN_KEY] = null
-            preferences[MEMBER_ID_KEY] = null
-            preferences[MEMBER_NAME_KEY] = null
+            preferences.remove(TOKEN_KEY)
+            preferences.remove(MEMBER_ID_KEY)
+            preferences.remove(MEMBER_NAME_KEY)
         }
     }
 
@@ -53,10 +54,12 @@ object TokenStore {
 
     val isLoggedIn: Flow<Boolean>
         get() = instance.data.map { preferences ->
-            preferences[TOKEN_KEY] != null && preferences[TOKEN_KEY]!!.isNotEmpty()
+            val t = preferences[TOKEN_KEY]
+            t != null && t.isNotEmpty()
         }
 
-    suspend fun getToken(): String? = instance.data.first().let { preferences ->
-        preferences[TOKEN_KEY]
-    }
+    suspend fun getToken(): String? =
+        instance.data.first { preferences ->
+            preferences[TOKEN_KEY] != null
+        }[TOKEN_KEY]
 }

@@ -377,6 +377,51 @@ final class Store
         ];
     }
 
+    /** @return array<string,mixed> */
+    public static function mapMember(array $row): array
+    {
+        return self::mapCustomer($row);
+    }
+
+    /** @return array<string,mixed> */
+    public static function mapPvDistribution(array $row): array
+    {
+        return [
+            'id'             => (int) $row['id'],
+            'member_id'      => (string) $row['member_id'],
+            'staff_id'       => $row['staff_id'] === null ? null : (int) $row['staff_id'],
+            'pv_amount'      => (float) $row['pv_amount'],
+            'reason'         => (string) $row['reason'],
+            'reference_type' => $row['reference_type'] ?? null,
+            'reference_id'   => $row['reference_id'] ?? null,
+            'created_at'     => Util::iso($row['created_at'] ?? null),
+            'rev'            => (int) ($row['rev'] ?? 0),
+        ];
+    }
+
+    /** Create or rotate a member's login PIN. Staff-only. */
+    public static function setMemberPin(int $customerId, string $memberId, string $plainPin): void
+    {
+        $hash = password_hash($plainPin, PASSWORD_DEFAULT);
+        $rev = self::nextRev();
+        $now = Util::now();
+
+        $existing = Database::one('SELECT id FROM member_auth WHERE customer_id = ?', [$customerId]);
+        if ($existing !== null) {
+            Database::run(
+                'UPDATE member_auth SET pin_hash = ?, updated_at = ?, rev = ? WHERE customer_id = ?',
+                [$hash, $now, $rev, $customerId]
+            );
+            return;
+        }
+
+        Database::run(
+            'INSERT INTO member_auth (customer_id, member_id, pin_hash, created_at, updated_at, rev)
+             VALUES (?, ?, ?, ?, ?, ?)',
+            [$customerId, $memberId, $hash, $now, $now, $rev]
+        );
+    }
+
     /** @return array<int,array<string,mixed>> */
     public static function customers(array $filters = []): array
     {

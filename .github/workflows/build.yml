@@ -48,22 +48,32 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/dxn-release.jks"
           echo "DXN_KEYSTORE=$RUNNER_TEMP/dxn-release.jks" >> "$GITHUB_ENV"
 
-      - name: Build debug + release + bundle
+      - name: Build staff app (debug + release + bundle)
         working-directory: android/DXNStockpoint
         env:
           DXN_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           DXN_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           DXN_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          gradle assembleDebug assembleRelease bundleRelease --no-daemon --stacktrace
+          ./gradlew assembleDebug assembleRelease bundleRelease --no-daemon --stacktrace
+
+      - name: Build member app (debug + release + bundle)
+        working-directory: android/DXNStockpointMember
+        env:
+          DXN_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          DXN_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          DXN_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          ./gradlew assembleDebug assembleRelease bundleRelease --no-daemon --stacktrace
 
       - name: Collect artefacts
         run: |
           set -e
           mkdir -p dist
+
+          # Staff app
           cp android/DXNStockpoint/app/build/outputs/apk/debug/app-debug.apk \
              dist/dxn-stockpoint-2.2.0-debug.apk
-          # Signed release only exists once the keystore secrets are configured.
           if [ -f android/DXNStockpoint/app/build/outputs/apk/release/app-release.apk ]; then
             cp android/DXNStockpoint/app/build/outputs/apk/release/app-release.apk \
                dist/dxn-stockpoint-2.2.0.apk
@@ -73,12 +83,26 @@ jobs:
           fi
           cp android/DXNStockpoint/app/build/outputs/bundle/release/app-release.aab \
              dist/dxn-stockpoint-2.2.0.aab
+
+          # Member app
+          cp android/DXNStockpointMember/app/build/outputs/apk/debug/app-debug.apk \
+             dist/dxn-member-1.0.0-debug.apk
+          if [ -f android/DXNStockpointMember/app/build/outputs/apk/release/app-release.apk ]; then
+            cp android/DXNStockpointMember/app/build/outputs/apk/release/app-release.apk \
+               dist/dxn-member-1.0.0.apk
+            cp dist/dxn-member-1.0.0.apk dist/dxn-member-latest.apk
+          else
+            cp dist/dxn-member-1.0.0-debug.apk dist/dxn-member-latest.apk
+          fi
+          cp android/DXNStockpointMember/app/build/outputs/bundle/release/app-release.aab \
+             dist/dxn-member-1.0.0.aab
+
           ls -lh dist
 
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
         with:
-          name: dxn-stockpoint-2.2.0
+          name: dxn-android-builds
           path: dist/*
           retention-days: 30
 
@@ -87,38 +111,33 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'v2.2.0' }}
-          name: Mohammadpur Stock Point v2.2.0 — Web + Android, live synced
+          name: DXN Stockpoint v2.2.0 — Staff + Member apps, live synced
           body: |
-            ## Mohammadpur Stock Point v2.2.0
+            ## DXN Stockpoint v2.2.0
 
-            The PHP 8 + MySQL API is the single source of truth, and the web app
-            and the Android app both run from it with revision-based live sync
-            and an offline outbox. The API and web app run on InfinityFree at https://dxn.10001mb.com/.
+            The PHP 8 + MySQL API is the single source of truth. The web app and both
+            Android apps run from it with revision-based live sync and an offline outbox.
 
-            **Install the APK:** `dxn-stockpoint-2.2.0-debug.apk` (sideload) or
-            upload `dxn-stockpoint-2.2.0.aab` to Google Play.
+            **API & web app:** https://dxn.10001mb.com/ (PIN: `2468`)
 
-            **Web app:** https://dxn.10001mb.com/
+            ### APKs (sideload on Android)
+            - `dxn-stockpoint-2.2.0-debug.apk` — Staff / stockpoint app (admin PIN, stock, orders)
+            - `dxn-member-1.0.0-debug.apk` — Member / customer app (member ID + PIN, PV balance, PV history)
+            - `.aab` files are also included for Google Play upload.
 
-            ### What is in this build
-            - Connects out of the box — the live shop API (dxn.10001mb.com) is the built-in default
-            - API returns the full 51-SKU catalogue by default (per_page=200)
-            - New Mohammadpur Stock Point logo, app icon and splash artwork
-            - The shop's full 2026 DXN price list: 51 SKUs with exact DP/PV/MRP
-            - Official DXN product photos for 47 SKUs (bundled offline; 4 use a generated tile)
-            - Product image previews in the catalogue, cart and admin screens
+            ### What is in the staff build
             - Shop PIN sign-in (HMAC bearer token, 30-day expiry)
-            - Native InfinityFree challenge solver, so the API works from the app
+            - Native InfinityFree challenge solver
             - Offline-first: cached catalogue, queued sales, automatic replay
             - Idempotent orders (`client_uuid`) — a retry never double-books
-            - Incremental sync on a server-wide revision counter
             - Stock ledger, low-stock alerts, dashboard, CSV exports
-            - PWA installable web app sharing the exact same data
 
-            ### First run
-            1. The app connects to https://dxn.10001mb.com/ automatically
-            2. Tap the sync strip until it reads **Live** (only if it is offline)
-            3. Unlock Admin with the shop PIN to manage stock and orders
+            ### What is in the member build
+            - Member ID + PIN login (separate from shop admin PIN)
+            - PV balance and total spent
+            - PV distribution history with reasons and references
+            - Logout / change PIN
+
           files: dist/*
           draft: false
           prerelease: false

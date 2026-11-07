@@ -21,7 +21,9 @@ use DXN\Controllers\CourierController;
 use DXN\Controllers\CustomerController;
 use DXN\Controllers\DashboardController;
 use DXN\Controllers\HealthController;
+use DXN\Controllers\MemberAuthController;
 use DXN\Controllers\OrderController;
+use DXN\Controllers\PVDistributionController;
 use DXN\Controllers\SettingsController;
 use DXN\Controllers\SyncController;
 use DXN\Request;
@@ -40,6 +42,16 @@ $router->post('/api/v1/migrate', static fn () => HealthController::migrate());
 $router->post('/api/v1/auth/login', static fn () => AuthController::login());
 $router->get('/api/v1/auth/me', static fn () => AuthController::me());
 $router->post('/api/v1/auth/pin', static fn () => AuthController::changePin());
+
+// ── Member login & profile (PV distribution) ────────────────────────────────
+$router->post('/api/v1/member/login', static fn () => MemberAuthController::login());
+$router->get('/api/v1/member/me', static fn () => MemberController::me());
+$router->get('/api/v1/member/pv-history', static fn () => MemberController::pvHistory());
+
+// ── Staff PV distribution (admin only) ──────────────────────────────────────
+$router->post('/api/v1/staff/pv-distribute', static fn () => PVDistributionController::distribute());
+$router->get('/api/v1/staff/members', static fn () => PVDistributionController::members());
+$router->get('/api/v1/staff/pv-distributions', static fn () => PVDistributionController::distributions());
 
 // ── Catalogue ───────────────────────────────────────────────────────────────
 $router->get('/api/v1/products', static fn () => CatalogController::index());

@@ -198,6 +198,33 @@ final class Schema
             'ALTER TABLE orders ADD COLUMN courier_cod_amount DECIMAL(12,2) NULL',
             'ALTER TABLE orders ADD COLUMN courier_created_at DATETIME NULL',
             'ALTER TABLE orders ADD COLUMN courier_note TEXT NULL',
+
+            // ── Member login & PV distribution ──────────────────────────────
+            "CREATE TABLE IF NOT EXISTS member_auth (
+                id            {$pk},
+                customer_id   BIGINT       NOT NULL,
+                member_id     VARCHAR(40)  NOT NULL,
+                pin_hash      VARCHAR(255) NOT NULL,
+                created_at    DATETIME     NOT NULL,
+                updated_at    DATETIME     NOT NULL,
+                rev           BIGINT       NOT NULL DEFAULT 0
+            ){$suffix}",
+            "CREATE TABLE IF NOT EXISTS pv_distributions (
+                id             {$pk},
+                member_id      VARCHAR(40)  NOT NULL,
+                staff_id       BIGINT       NULL,
+                pv_amount      DECIMAL(12,2) NOT NULL DEFAULT 0,
+                reason         VARCHAR(160) NOT NULL,
+                reference_type VARCHAR(32)  NULL,
+                reference_id   VARCHAR(64)  NULL,
+                created_at     DATETIME     NOT NULL,
+                rev            BIGINT       NOT NULL DEFAULT 0
+            ){$suffix}",
+            'CREATE UNIQUE INDEX IF NOT EXISTS uk_member_auth_member ON member_auth (member_id)',
+            'CREATE INDEX IF NOT EXISTS idx_member_auth_customer ON member_auth (customer_id)',
+            'CREATE UNIQUE INDEX IF NOT EXISTS uk_pv_dist_ref ON pv_distributions (reference_type, reference_id)',
+            'CREATE INDEX IF NOT EXISTS idx_pv_dist_member ON pv_distributions (member_id)',
+            'CREATE INDEX IF NOT EXISTS idx_pv_dist_created ON pv_distributions (created_at)',
         ];
     }
 
@@ -215,7 +242,7 @@ final class Schema
         return [
             'products', 'orders', 'order_items', 'customers',
             'stock_movements', 'settings', 'sync_counter', 'auth_attempts', 'audit_log',
-            'courier_events',
+            'courier_events', 'member_auth', 'pv_distributions',
         ];
     }
 

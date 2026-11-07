@@ -15,6 +15,7 @@ namespace DXN;
 final class Auth
 {
     public const ROLE_ADMIN = 'admin';
+    public const ROLE_MEMBER = 'member';
 
     /** @var array<string,mixed>|null */
     private static ?array $claims = null;
@@ -112,6 +113,41 @@ final class Auth
         if (!self::isAdmin()) {
             throw new ApiException('Admin authentication required', 401, 'unauthorized');
         }
+    }
+
+    /** Throws 401 unless the caller is an authenticated member. */
+    public static function requireMember(): void
+    {
+        if (!self::isMember()) {
+            throw new ApiException('Member authentication required', 401, 'unauthorized');
+        }
+    }
+
+    /** True when a valid bearer token with role=member is present. */
+    public static function isMember(): bool
+    {
+        $claims = self::claims();
+        return $claims !== null && ($claims['role'] ?? null) === self::ROLE_MEMBER;
+    }
+
+    /** The member_id embedded in the current bearer token, or null. */
+    public static function memberId(): ?string
+    {
+        $claims = self::claims();
+        if ($claims === null || ($claims['role'] ?? null) !== self::ROLE_MEMBER) {
+            return null;
+        }
+        return (string) ($claims['member_id'] ?? '');
+    }
+
+    /** The customer_id embedded in the current bearer token, or null. */
+    public static function memberCustomerId(): ?int
+    {
+        $claims = self::claims();
+        if ($claims === null || ($claims['role'] ?? null) !== self::ROLE_MEMBER) {
+            return null;
+        }
+        return isset($claims['customer_id']) ? (int) $claims['customer_id'] : null;
     }
 
     private static function guardBruteForce(): void
